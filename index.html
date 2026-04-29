@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel de Feedback – Lives TikTok</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0f0f1a;
+      color: #e0e0e0;
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+    }
+
+    .card {
+      background: #1a1a2e;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 1px solid #2a2a4a;
+    }
+
+    .card h2 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #a78bfa;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .campos-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .campo-full { grid-column: 1 / -1; }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: #9ca3af;
+      margin-bottom: 4px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="time"] {
+      width: 100%;
+      background: #0f0f1a;
+      border: 1px solid #3a3a5c;
+      border-radius: 8px;
+      padding: 8px 10px;
+      color: #e0e0e0;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus { border-color: #7c3aed; }
+
+    .botoes-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn-feedback {
+      background: #1e1b4b;
+      color: #c4b5fd;
+      border: 1px solid #4c3f9f;
+      border-radius: 8px;
+      padding: 7px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-feedback:hover {
+      background: #2e2475;
+      transform: translateY(-1px);
+    }
+
+    .btn-delete-item {
+      background: transparent;
+      border: none;
+      color: #6b7280;
+      cursor: pointer;
+      font-size: 11px;
+      padding: 2px 5px;
+      border-radius: 4px;
+      transition: color 0.2s;
+    }
+
+    .btn-delete-item:hover { color: #ef4444; }
+
+    .btn-action {
+      border: none;
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-novo   { background: #065f46; color: #6ee7b7; }
+    .btn-novo:hover { background: #047857; }
+
+    .btn-editar { background: #78350f; color: #fcd34d; }
+    .btn-editar:hover { background: #92400e; }
+
+    .btn-salvar {
+      background: #7c3aed;
+      color: #fff;
+      width: 100%;
+      justify-content: center;
+      padding: 12px;
+      font-size: 15px;
+      border-radius: 10px;
+    }
+    .btn-salvar:hover { background: #6d28d9; transform: translateY(-1px); }
+    .btn-salvar:disabled {
+      background: #4c3a8a;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-limpar {
+      background: #1f2937;
+      color: #9ca3af;
+      border: 1px solid #374151;
+    }
+    .btn-limpar:hover { background: #374151; }
+
+    textarea {
+      width: 100%;
+      height: 300px;
+      background: #0f0f1a;
+      border: 1px solid #3a3a5c;
+      border-radius: 8px;
+      padding: 12px;
+      color: #e0e0e0;
+      font-size: 13px;
+      line-height: 1.6;
+      resize: vertical;
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    textarea:focus { border-color: #7c3aed; }
+
+    .acoes-finais {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .acoes-finais .btn-salvar { flex: 1; min-width: 140px; }
+    .acoes-finais .btn-limpar { flex: none; }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.ativo { display: flex; }
+
+    .modal {
+      background: #1a1a2e;
+      border: 1px solid #3a3a5c;
+      border-radius: 14px;
+      padding: 24px;
+      width: 90%;
+      max-width: 480px;
+    }
+
+    .modal h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #a78bfa;
+      margin-bottom: 16px;
+    }
+
+    .modal label { font-size: 13px; margin-bottom: 4px; }
+    .modal input[type="text"], .modal textarea { width: 100%; margin-bottom: 12px; }
+    .modal textarea { height: 180px; }
+
+    .modal-botoes {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 6px;
+    }
+
+    .btn-cancelar {
+      background: #374151; color: #d1d5db;
+      border: none; border-radius: 8px;
+      padding: 8px 16px; cursor: pointer; font-size: 13px;
+    }
+
+    .btn-confirmar {
+      background: #7c3aed; color: #fff;
+      border: none; border-radius: 8px;
+      padding: 8px 16px; cursor: pointer;
+      font-size: 13px; font-weight: 600;
+    }
+    .btn-confirmar:hover { background: #6d28d9; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 20px; right: 20px;
+      background: #065f46; color: #6ee7b7;
+      padding: 12px 20px; border-radius: 10px;
+      font-size: 13px; font-weight: 600;
+      opacity: 0; transform: translateY(10px);
+      transition: all 0.3s; z-index: 200;
+      pointer-events: none;
+    }
+    .toast.visivel  { opacity: 1; transform: translateY(0); }
+    .toast.erro     { background: #7f1d1d; color: #fca5a5; }
+    .toast.enviando { background: #1e3a5f; color: #93c5fd; }
+
+    /* Spinner no botão salvar */
+    .spinner {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 500px) {
+      .campos-grid { grid-template-columns: 1fr; }
+      .campo-full  { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>🎯 Painel de Feedback – TikTok Lives</h1>
+
+<!-- Dados da Live -->
+<div class="card">
+  <h2>📋 Dados da Live</h2>
+  <div class="campos-grid">
+    <div class="campo-full">
+      <label>Username do Streamer (@)</label>
+      <input id="username" type="text" placeholder="@usuario_tiktok">
+    </div>
+    <div class="campo-full">
+      <label>Nome do Streamer</label>
+      <input id="nomeStreamer" type="text" placeholder="Ex.: Mirian">
+    </div>
+    <div>
+      <label>Data da Live</label>
+      <input id="dataLive" type="date">
+    </div>
+    <div>
+      <label>Hora da Live</label>
+      <input id="horaLive" type="time">
+    </div>
+  </div>
+</div>
+
+<!-- Botões de Feedback -->
+<div class="card">
+  <h2>💬 Pontos de Feedback</h2>
+  <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+    <button class="btn-action btn-novo"   onclick="abrirModalNovo()">➕ Novo Texto</button>
+    <button class="btn-action btn-editar" id="btnModoEdicao" onclick="toggleModoEdicao()">✏️ Editar Botões</button>
+  </div>
+  <div class="botoes-grid" id="containerBotoes"></div>
+</div>
+
+<!-- Feedback Final -->
+<div class="card">
+  <h2>📝 Feedback Final</h2>
+  <textarea id="textoFinal"></textarea>
+  <div class="acoes-finais">
+    <button class="btn-action btn-salvar" id="btnSalvar" onclick="salvarFeedback()">
+      💾 Salvar Feedback
+    </button>
+    <button class="btn-action btn-limpar" onclick="limparTudo()">🗑️ Limpar</button>
+  </div>
+</div>
+
+<!-- Modal Novo / Editar -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3 id="modalTitulo">Novo Texto de Feedback</h3>
+    <label>Nome do botão</label>
+    <input type="text" id="modalNome" placeholder="Ex.: Áudio – Ruído de fundo">
+    <label>Texto completo</label>
+    <textarea id="modalTexto" placeholder="Digite o texto que será inserido ao clicar no botão..."></textarea>
+    <div class="modal-botoes">
+      <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-confirmar" onclick="confirmarModal()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ══════════════════════════════════════════════════════
+  //  ⚠️  COLE AQUI A URL DO SEU GOOGLE APPS SCRIPT
+  // ══════════════════════════════════════════════════════
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxu5rDZRx13ZiY1diGB9JYEtaXtKb3GGu_VkNHrwrMBhK4RUjYNsJDs2u3f3Pv31ZbJ/exec';
+  // ══════════════════════════════════════════════════════
+
+  const STORAGE_KEY = 'feedbackBotoes_v2';
+
+  const textosDefault = [
+    {
+      id: 'AUDIO_RUIDO', nome: 'Áudio – Ruído de fundo',
+      texto: `- Áudio: Ao fundo é possível ouvir ruídos constantes (como TV, rádio ou ventilador). Isso gera muito barulho e faz com que as pessoas não fiquem na live.\n  Tente encontrar um local mais tranquilo, sem interferência de outros sons.\n\n`
+    },
+    {
+      id: 'AUDIO_BAIXO', nome: 'Áudio – Volume baixo',
+      texto: `- Áudio: O volume da sua voz está um pouco baixo em relação ao restante do som da live.\n  Faça um teste rápido antes de começar, verificando se sua voz está clara e em destaque.\n\n`
+    },
+    {
+      id: 'ILUMINACAO_BOA', nome: 'Iluminação – Boa',
+      texto: `- Iluminação: Muito boa! No futuro, valerá a pena investir em uma ring light para reduzir a quantidade de sombras.\n\n`
+    },
+    {
+      id: 'ILUMINACAO_FRACA', nome: 'Iluminação – Fraca',
+      texto: `- Iluminação: A iluminação está um pouco fraca, o que dificulta para o público ver seu rosto com clareza.\n  Use uma fonte de luz voltada para o seu rosto e evite ficar contra a luz.\n\n`
+    },
+    {
+      id: 'PERGUNTAS_FECHADAS', nome: 'Perguntas fechadas',
+      texto: `- Perguntas fechadas: Prefira perguntas abertas, como: "Como foi seu dia?", "O que você vai fazer hoje?". Isso incentiva mais interação e aumenta o engajamento.\n\n`
+    },
+    {
+      id: 'REPETICAO_PALAVRAS', nome: 'Repetição de palavras',
+      texto: `- Repetição de palavras: Evite repetir a mesma expressão muitas vezes seguidas. O TikTok pode interpretar isso como comportamento automatizado e prejudicar o alcance da live.\n\n`
+    },
+    {
+      id: 'POSICAO_CELULAR', nome: 'Posição do celular',
+      texto: `- Posição do celular: Apoie o aparelho em uma superfície fixa, deixando suas mãos livres. Movimentar as mãos traz mais naturalidade e prende melhor a atenção do público.\n\n`
+    },
+    {
+      id: 'POSICAO_CAMERA', nome: 'Enquadramento da câmera',
+      texto: `- Posição da câmera: Fique centralizado na imagem, deixando um pouco de espaço acima da cabeça e nas laterais para um enquadramento mais agradável.\n\n`
+    },
+    {
+      id: 'DURACAO_LIVE', nome: 'Duração mínima',
+      texto: `- Duração da live: Procure que cada live tenha pelo menos 2 horas de duração para maximizar o alcance no TikTok.\n\n`
+    },
+    {
+      id: 'MUTAR_OPONENTE', nome: 'Mutar oponente',
+      texto: `- Mutar o oponente: Quando não houver interação com o oponente, tente interagir com ele. Caso não esteja aberto, avise que irá mutar o áudio e peça para sinalizar quando quiser que você desmute.\n\n`
+    },
+    {
+      id: 'VIDEOS_POSTADOS', nome: 'Vídeos postados',
+      texto: `- Vídeos postados: Ótimo ritmo de postagem! Lembre-se de adicionar uma boa descrição e hashtags em alta em cada vídeo para atrair mais pessoas.\n\n`
+    },
+    {
+      id: 'BIOGRAFIA', nome: 'Biografia do perfil',
+      texto: `- Biografia do perfil: Crie uma bio que apresente quem você é. Exemplo:\n  [Seu nome] | Streamer\n  Autêntica, divertida e sem filtro.\n  Live todo dia às XXh – vem rir e fazer parte da família!\n\n`
+    },
+    {
+      id: 'NOME_USUARIO', nome: 'Nome de usuário / exibição',
+      texto: `- Nome de usuário e exibição: Quando esses nomes são diferentes gera confusão. Adote o mesmo nome nos dois campos.\n\n`
+    }
+  ];
+
+  let botoes       = [];
+  let modoEdicao   = false;
+  let modalEditId  = null;
+
+  // ─── INIT ────────────────────────────────────────────
+  function init() {
+    preencherDataHora();
+    carregarBotoes();
+    renderizarBotoes();
+    gerarIntroducao();
+  }
+
+  // ─── DATA / HORA ATUAL ───────────────────────────────
+  function preencherDataHora() {
+    const agora = new Date();
+    document.getElementById('dataLive').value = agora.toISOString().slice(0, 10);
+    const hh = String(agora.getHours()).padStart(2, '0');
+    const mm = String(agora.getMinutes()).padStart(2, '0');
+    document.getElementById('horaLive').value = `${hh}:${mm}`;
+  }
+
+  // ─── BOTÕES ──────────────────────────────────────────
+  function carregarBotoes() {
+    const salvo = localStorage.getItem(STORAGE_KEY);
+    botoes = salvo ? JSON.parse(salvo) : textosDefault.map(b => ({ ...b }));
+    if (!salvo) salvarBotoesLocal();
+  }
+
+  function salvarBotoesLocal() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(botoes));
+  }
+
+  function renderizarBotoes() {
+    const container = document.getElementById('containerBotoes');
+    container.innerHTML = '';
+    botoes.forEach(b => {
+      const wrap = document.createElement('div');
+      wrap.style.cssText = 'display:flex;align-items:center;gap:2px;';
+
+      const btn = document.createElement('button');
+      btn.className = 'btn-feedback';
+      btn.textContent = b.nome;
+      btn.onclick = () => modoEdicao ? abrirModalEditar(b.id) : addTexto(b.texto);
+
+      wrap.appendChild(btn);
+
+      if (modoEdicao) {
+        const del = document.createElement('button');
+        del.className = 'btn-delete-item';
+        del.title = 'Excluir';
+        del.textContent = '✕';
+        del.onclick = (e) => { e.stopPropagation(); deletarBotao(b.id); };
+        wrap.appendChild(del);
+      }
+
+      container.appendChild(wrap);
+    });
+  }
+
+  function addTexto(texto) {
+    const ta = document.getElementById('textoFinal');
+    ta.value += texto;
+    ta.scrollTop = ta.scrollHeight;
+  }
+
+  // ─── MODO EDIÇÃO ─────────────────────────────────────
+  function toggleModoEdicao() {
+    modoEdicao = !modoEdicao;
+    const btn = document.getElementById('btnModoEdicao');
+    if (modoEdicao) {
+      btn.textContent = '✅ Concluir Edição';
+      btn.style.background = '#064e3b';
+      btn.style.color = '#6ee7b7';
+    } else {
+      btn.textContent = '✏️ Editar Botões';
+      btn.style.background = '';
+      btn.style.color = '';
+    }
+    renderizarBotoes();
+  }
+
+  // ─── MODAL ───────────────────────────────────────────
+  function abrirModalNovo() {
+    modalEditId = null;
+    document.getElementById('modalTitulo').textContent = 'Novo Texto de Feedback';
+    document.getElementById('modalNome').value  = '';
+    document.getElementById('modalTexto').value = '';
+    document.getElementById('modalOverlay').classList.add('ativo');
+  }
+
+  function abrirModalEditar(id) {
+    const b = botoes.find(x => x.id === id);
+    if (!b) return;
+    modalEditId = id;
+    document.getElementById('modalTitulo').textContent = 'Editar Texto de Feedback';
+    document.getElementById('modalNome').value  = b.nome;
+    document.getElementById('modalTexto').value = b.texto;
+    document.getElementById('modalOverlay').classList.add('ativo');
+  }
+
+  function fecharModal() {
+    document.getElementById('modalOverlay').classList.remove('ativo');
+  }
+
+  function confirmarModal() {
+    const nome  = document.getElementById('modalNome').value.trim();
+    const texto = document.getElementById('modalTexto').value;
+    if (!nome)        { mostrarToast('Informe o nome do botão.', 'erro'); return; }
+    if (!texto.trim()){ mostrarToast('Informe o texto do feedback.', 'erro'); return; }
+
+    if (modalEditId) {
+      const idx = botoes.findIndex(x => x.id === modalEditId);
+      if (idx >= 0) { botoes[idx].nome = nome; botoes[idx].texto = texto; }
+    } else {
+      botoes.push({ id: 'custom_' + Date.now(), nome, texto });
+    }
+
+    salvarBotoesLocal();
+    renderizarBotoes();
+    fecharModal();
+    mostrarToast(modalEditId ? 'Botão atualizado!' : 'Novo botão criado!');
+  }
+
+  function deletarBotao(id) {
+    if (!confirm('Excluir este botão?')) return;
+    botoes = botoes.filter(b => b.id !== id);
+    salvarBotoesLocal();
+    renderizarBotoes();
+    mostrarToast('Botão excluído.');
+  }
+
+  document.getElementById('modalOverlay').addEventListener('click', function(e) {
+    if (e.target === this) fecharModal();
+  });
+
+  // ─── INTRODUÇÃO ──────────────────────────────────────
+  function gerarIntroducao() {
+    document.getElementById('textoFinal').value =
+`Olá! Tudo bem?
+
+Vou te passar alguns pontos para te ajudar a melhorar seu desempenho em suas lives.
+
+*Pontos a desenvolver*
+`;
+  }
+
+  // ─── LIMPAR ──────────────────────────────────────────
+  function limparTudo() {
+    document.getElementById('username').value     = '';
+    document.getElementById('nomeStreamer').value = '';
+    preencherDataHora();
+    gerarIntroducao();
+  }
+
+  // ─── SALVAR FEEDBACK ─────────────────────────────────
+ async function salvarFeedback() {
+    const username     = document.getElementById('username').value.trim();
+    const nomeStreamer = document.getElementById('nomeStreamer').value.trim();
+    const dataLive     = document.getElementById('dataLive').value;
+    const horaLive     = document.getElementById('horaLive').value;
+    const textoBase    = document.getElementById('textoFinal').value.trim();
+
+    if (!username)  { mostrarToast('Preencha o Username do streamer.', 'erro'); return; }
+    if (!dataLive)  { mostrarToast('Preencha a Data da Live.', 'erro'); return; }
+    if (!textoBase) { mostrarToast('O feedback está vazio.', 'erro'); return; }
+
+    const [ano, mes, dia] = dataLive.split('-');
+    const dataFormatada   = `${dia}/${mes}/${ano}`;
+    const horaTexto       = horaLive ? ` às ${horaLive}` : '';
+
+    const textoFinal =
+      textoBase
+      + `\n\nAs dicas acima foram baseadas na live que você fez no dia ${dataFormatada}${horaTexto}.`
+      + `\n\nEspero que as dicas te ajudem e qualquer dúvida, por favor, me avise :)`
+      + `\n\nAguardo sua próxima live :)`;
+
+    const btnSalvar = document.getElementById('btnSalvar');
+    btnSalvar.disabled = true;
+    btnSalvar.innerHTML = '<span class="spinner"></span> Salvando...';
+    mostrarToast('Enviando para a planilha...', 'enviando');
+
+    try {
+      // Monta a URL com parâmetros GET (funciona sem bloqueio de CORS)
+      const params = new URLSearchParams({
+        username,
+        nomeStreamer,
+        dataLive: dataFormatada,
+        horaLive,
+        feedback: textoFinal
+      });
+
+      const resposta = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`, {
+        method: 'GET',
+        mode: 'no-cors'
+      });
+
+      mostrarToast('✅ Feedback salvo na planilha!');
+      setTimeout(() => limparTudo(), 1500);
+
+    } catch (err) {
+      mostrarToast('Erro ao salvar. Verifique a URL do script.', 'erro');
+      console.error(err);
+    } finally {
+      btnSalvar.disabled = false;
+      btnSalvar.innerHTML = '💾 Salvar Feedback';
+    }
+  }
+
+  // ─── TOAST ───────────────────────────────────────────
+  function mostrarToast(msg, tipo = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className   = `toast visivel ${tipo}`;
+    setTimeout(() => { t.className = 'toast'; }, 3500);
+  }
+
+  // ─── START ───────────────────────────────────────────
+  init();
+</script>
+</body>
+</html>
