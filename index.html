@@ -585,12 +585,25 @@
     });
   }
 
-  function addTexto(texto) {
-    const ta = document.getElementById('textoFinal');
-    ta.value += texto;
-    ta.scrollTop = ta.scrollHeight;
+function addTexto(texto) {
+  const ta = document.getElementById('textoFinal');
+
+  // Remove quebras de linha extras do final do texto a inserir
+  const textoLimpo = texto.trimEnd();
+
+  // Garante exatamente uma linha em branco entre blocos
+  if (ta.value && !ta.value.endsWith('\n\n')) {
+    if (ta.value.endsWith('\n')) {
+      ta.value += '\n';
+    } else {
+      ta.value += '\n\n';
+    }
   }
 
+  ta.value += textoLimpo + '\n\n';
+  ta.scrollTop = ta.scrollHeight;
+}
+  
   // ─── MOVER BOTÃO ─────────────────────────────────────
   async function moverBotao(idx, direcao) {
     const novoIdx = idx + direcao;
