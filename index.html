@@ -801,11 +801,15 @@ Vou te passar alguns pontos para te ajudar a melhorar seu desempenho em suas liv
   }
 
   // ─── SALVAR FEEDBACK ─────────────────────────────────
-  async function salvarFeedback() {
+ async function salvarFeedback() {
     const username  = document.getElementById('username').value.trim();
     const dataLive  = document.getElementById('dataLive').value;
     const horaLive  = document.getElementById('horaLive').value;
-    const textoBase = document.getElementById('textoFinal').value.trim();
+
+    // Remove quebras de linha duplicadas antes de qualquer validação
+    let textoBase = document.getElementById('textoFinal').value;
+    textoBase = textoBase.replace(/\n{3,}/g, '\n\n').trim();
+    document.getElementById('textoFinal').value = textoBase;
 
     if (!username)  { mostrarToast('Preencha o Username do streamer.', 'erro'); return; }
     if (!dataLive)  { mostrarToast('Preencha a Data da Live.', 'erro'); return; }
