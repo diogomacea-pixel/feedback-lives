@@ -479,7 +479,14 @@
     showLoading("Carregando streamers...");
     try {
       allStreamers = await apiGet({ action: "getAll" });
-      renderTable(allStreamers);
+
+      // Filtra para exibição: apenas Em contato e Entrou para a DM up
+      // allStreamers continua com TODOS os dados para consulta e edição
+      const visiveis = allStreamers.filter(s =>
+        s.status === "Em contato" || s.status === "Entrou para a DM up"
+      );
+
+      renderTable(visiveis);
       updateStatusCounts();
     } catch(err) {
       showToast("Erro ao carregar dados.", "error");
@@ -701,7 +708,12 @@
     const fTipo   = document.getElementById("filterTipo").value;
     const fOrigem = document.getElementById("filterOrigem").value;
 
-    const filtered = allStreamers.filter(s =>
+    // Parte sempre da base visível (Em contato + DM up)
+    const base = allStreamers.filter(s =>
+      s.status === "Em contato" || s.status === "Entrou para a DM up"
+    );
+
+    const filtered = base.filter(s =>
       (!fData   || s.dataContato.toString().toLowerCase().includes(fData)) &&
       (!fUser   || s.username.toLowerCase().includes(fUser)) &&
       (!fStatus || s.status === fStatus) &&
