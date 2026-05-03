@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Captação de Streamers</title>
   <style>
-    /* ===================== RESET & BASE ===================== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
@@ -28,6 +27,14 @@
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 16px;
+    }
+
+    /* Lado esquerdo: título + link de voltar empilhados */
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
     }
 
     header h1 { font-size: 1.4rem; font-weight: 700; color: #c9b8ff; }
@@ -108,21 +115,21 @@
     textarea { resize: vertical; min-height: 90px; }
 
     .user-feedback {
-  font-size: 0.75rem;
-  padding: 5px 10px;
-  border-radius: 6px;
-  display: none;
-  margin-top: 4px;
-}
+      font-size: 0.75rem;
+      padding: 5px 10px;
+      border-radius: 6px;
+      display: none;
+      margin-top: 4px;
+    }
 
-.user-feedback.warning {
-  display: block;           /* bloco → fica embaixo do input */
-  background: rgba(251,191,36,0.15);
-  border: 1px solid #fbbf24;
-  color: #fbbf24;
-  white-space: normal;      /* permite quebra de linha se necessário */
-  word-break: break-word;
-}
+    .user-feedback.warning {
+      display: block;
+      background: rgba(251,191,36,0.15);
+      border: 1px solid #fbbf24;
+      color: #fbbf24;
+      white-space: normal;
+      word-break: break-word;
+    }
 
     /* ===================== BOTÕES ===================== */
     .btn-row {
@@ -143,6 +150,25 @@
     .btn-primary { background: linear-gradient(135deg,#7c6dff,#9b59ff); color:#fff; }
     .btn-edit    { background: linear-gradient(135deg,#f59e0b,#f97316); color:#fff; }
     .btn-cancel  { background: #3a3a5c; color: #ccc; }
+
+    /* ===================== LINK FEEDBACK ===================== */
+    .btn-feedback {
+      background: rgba(52,211,153,0.15);
+      border: 1px solid #34d399;
+      color: #34d399;
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background 0.2s;
+      display: inline-block;
+    }
+
+    .btn-feedback:hover {
+      background: rgba(52,211,153,0.3);
+    }
 
     /* ===================== EDIT BANNER ===================== */
     .edit-banner {
@@ -174,8 +200,8 @@
     #loadingOverlay {
       position: fixed; inset: 0;
       background: rgba(0,0,0,0.65);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 9998; display: none;
+      display: none; align-items: center; justify-content: center;
+      z-index: 9998;
     }
     #loadingOverlay.show { display: flex; }
     .loading-box {
@@ -258,26 +284,7 @@
 
     .proximo-contato { color: #fbbf24; font-weight: 600; font-size: 0.82rem; }
     .empty-state { text-align: center; padding: 40px 20px; color: #666; font-size: 0.88rem; }
-
-    /* Contador de linhas */
     .row-count { font-size: 0.78rem; color: #666; }
-
-    .btn-feedback {
-  background: rgba(52,211,153,0.15);
-  border: 1px solid #34d399;
-  color: #34d399;
-  border-radius: 8px;
-  padding: 7px 14px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: background 0.2s;
-}
-
-.btn-feedback:hover {
-  background: rgba(52,211,153,0.3);
-}
   </style>
 </head>
 <body>
@@ -292,27 +299,16 @@
 
 <!-- ── Header ─────────────────────────────────────────────── -->
 <header>
-  <h1>🎯 Captação de Streamers</h1>
-  <a 
-   href="https://diogomacea-pixel.github.io/feedback-lives" 
-   class="btn-feedback""
-  style="
-    background: rgba(124,109,255,0.15);
-    border: 1px solid #7c6dff;
-    color: #c9b8ff;
-    border-radius: 8px;
-    padding: 7px 14px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    text-decoration: none;
-    white-space: nowrap;
-    transition: background 0.2s;
-  "
-  onmouseover="this.style.background='rgba(124,109,255,0.3)'"
-  onmouseout="this.style.background='rgba(124,109,255,0.15)'"
->
-  💬 Feedback
-</a>
+
+  <!-- Lado esquerdo: título + botão voltar -->
+  <div class="header-left">
+    <h1>🎯 Captação de Streamers</h1>
+    <a href="https://diogomacea-pixel.github.io/feedback-lives/" class="btn-feedback">
+     💬 Feedback
+    </a>
+  </div>
+
+  <!-- Lado direito: cards de status -->
   <div class="status-cards">
     <div class="status-card contato">
       <div class="label">Em Contato</div>
@@ -327,6 +323,7 @@
       <div class="count" id="countRejeitou">—</div>
     </div>
   </div>
+
 </header>
 
 <!-- ── Formulário ─────────────────────────────────────────── -->
@@ -341,10 +338,10 @@
   <div class="form-grid">
 
     <div class="form-group">
-  <label for="inputUsername">Nome de Usuário (TikTok)</label>
-  <input type="text" id="inputUsername" placeholder="@usuario" autocomplete="off"/>
-  <span class="user-feedback" id="userFeedback"></span>
-</div>
+      <label for="inputUsername">Nome de Usuário (TikTok)</label>
+      <input type="text" id="inputUsername" placeholder="@usuario" autocomplete="off"/>
+      <span class="user-feedback" id="userFeedback"></span>
+    </div>
 
     <div class="form-group">
       <label for="inputTipo">Tipo de Convite</label>
@@ -443,22 +440,16 @@
 
 <!-- ── JavaScript ─────────────────────────────────────────── -->
 <script>
-  // ╔══════════════════════════════════════════════════════╗
-  // ║  ⚠️  SUBSTITUA PELA SUA URL DO WEB APP DO APPS SCRIPT ║
-  // ╚══════════════════════════════════════════════════════╝
   const API_URL = "https://script.google.com/macros/s/AKfycbxu5rDZRx13ZiY1diGB9JYEtaXtKb3GGu_VkNHrwrMBhK4RUjYNsJDs2u3f3Pv31ZbJ/exec";
 
-  // ── Estado ─────────────────────────────────────────────
   let allStreamers  = [];
   let editMode      = false;
   let editingUser   = null;
   let checkTimeout  = null;
   let toastTimer    = null;
 
-  // ── Init ───────────────────────────────────────────────
   document.addEventListener("DOMContentLoaded", () => {
     loadAllData();
-
     document.getElementById("inputUsername").addEventListener("input", () => {
       clearTimeout(checkTimeout);
       const val = document.getElementById("inputUsername").value.trim();
@@ -467,7 +458,6 @@
     });
   });
 
-  // ── API helpers ────────────────────────────────────────
   async function apiGet(params) {
     const url = new URL(API_URL);
     Object.entries(params).forEach(([k,v]) => url.searchParams.set(k,v));
@@ -479,13 +469,12 @@
     const res = await fetch(API_URL, {
       method: "POST",
       redirect: "follow",
-      headers: { "Content-Type": "text/plain" }, // evita preflight CORS
+      headers: { "Content-Type": "text/plain" },
       body: JSON.stringify(body)
     });
     return res.json();
   }
 
-  // ── Carrega todos os dados ─────────────────────────────
   async function loadAllData() {
     showLoading("Carregando streamers...");
     try {
@@ -499,7 +488,6 @@
     }
   }
 
-  // ── Verificação ao vivo (local) ────────────────────────
   function liveCheckUser(username) {
     const found = allStreamers.find(
       s => s.username.toLowerCase() === username.toLowerCase()
@@ -525,7 +513,6 @@
     el.className   = "user-feedback";
   }
 
-  // ── Contagens ──────────────────────────────────────────
   function updateStatusCounts() {
     let c = 0, d = 0, r = 0;
     allStreamers.forEach(s => {
@@ -538,7 +525,6 @@
     document.getElementById("countRejeitou").textContent = r;
   }
 
-  // ── Salvar ─────────────────────────────────────────────
   async function handleSalvar() {
     const username    = document.getElementById("inputUsername").value.trim();
     const tipoConvite = document.getElementById("inputTipo").value;
@@ -563,20 +549,17 @@
     }
   }
 
-  // ── Entrar em modo edição ──────────────────────────────
   function handleEditar() {
     const username = document.getElementById("inputUsername").value.trim();
     const found    = allStreamers.find(s => s.username.toLowerCase() === username.toLowerCase());
     if (!found) { showToast("Usuário não encontrado.", "error"); return; }
 
-    // Preenche form
     document.getElementById("inputUsername").value = found.username;
     document.getElementById("inputTipo").value     = found.tipoConvite;
     document.getElementById("inputStatus").value   = found.status;
     document.getElementById("inputOrigem").value   = found.origem;
     document.getElementById("inputDicas").value    = found.dicas || "";
 
-    // Ativa modo edição
     editMode    = true;
     editingUser = found.username;
 
@@ -584,17 +567,16 @@
     document.getElementById("inputTipo").disabled     = true;
     document.getElementById("inputOrigem").disabled   = true;
 
-    document.getElementById("btnSalvar").textContent  = "💾 Salvar Edição";
-    document.getElementById("btnSalvar").onclick      = handleSalvarEdicao;
+    document.getElementById("btnSalvar").textContent     = "💾 Salvar Edição";
+    document.getElementById("btnSalvar").onclick         = handleSalvarEdicao;
     document.getElementById("btnCancelar").style.display = "inline-flex";
-    document.getElementById("btnEditar").disabled     = true;
+    document.getElementById("btnEditar").disabled        = true;
     document.getElementById("editingUserLabel").textContent = `@${found.username}`;
     document.getElementById("editBanner").classList.add("show");
 
     showToast(`Editando @${found.username}`, "info");
   }
 
-  // ── Salvar edição ──────────────────────────────────────
   async function handleSalvarEdicao() {
     const status = document.getElementById("inputStatus").value;
     const dicas  = document.getElementById("inputDicas").value.trim();
@@ -612,7 +594,6 @@
     }
   }
 
-  // ── Cancelar edição ────────────────────────────────────
   function handleCancelar() {
     editMode    = false;
     editingUser = null;
@@ -621,51 +602,47 @@
       document.getElementById(id).disabled = false;
     });
 
-    document.getElementById("btnSalvar").textContent  = "💾 Salvar";
-    document.getElementById("btnSalvar").onclick      = handleSalvar;
+    document.getElementById("btnSalvar").textContent     = "💾 Salvar";
+    document.getElementById("btnSalvar").onclick         = handleSalvar;
     document.getElementById("btnCancelar").style.display = "none";
-    document.getElementById("btnEditar").disabled     = true;
+    document.getElementById("btnEditar").disabled        = true;
     document.getElementById("editBanner").classList.remove("show");
 
     clearForm();
   }
 
-  // ── Carregar usuário da tabela ─────────────────────────
   function loadUserFromTable(username) {
-  if (editMode) handleCancelar();
+    if (editMode) handleCancelar();
 
-  const found = allStreamers.find(s => s.username === username);
-  if (!found) return;
+    const found = allStreamers.find(s => s.username === username);
+    if (!found) return;
 
-  // Preenche os campos
-  document.getElementById("inputUsername").value = found.username;
-  document.getElementById("inputTipo").value     = found.tipoConvite;
-  document.getElementById("inputStatus").value   = found.status;
-  document.getElementById("inputOrigem").value   = found.origem;
-  document.getElementById("inputDicas").value    = found.dicas || "";
+    document.getElementById("inputUsername").value = found.username;
+    document.getElementById("inputTipo").value     = found.tipoConvite;
+    document.getElementById("inputStatus").value   = found.status;
+    document.getElementById("inputOrigem").value   = found.origem;
+    document.getElementById("inputDicas").value    = found.dicas || "";
 
-  // Esconde o feedback de "já contatado" (não faz sentido ao clicar na tabela)
-  hideFeedback();
+    hideFeedback();
 
-  // Já ativa o modo edição diretamente, sem precisar clicar no botão Editar
-  editMode    = true;
-  editingUser = found.username;
+    editMode    = true;
+    editingUser = found.username;
 
-  document.getElementById("inputUsername").disabled = true;
-  document.getElementById("inputTipo").disabled     = true;
-  document.getElementById("inputOrigem").disabled   = true;
+    document.getElementById("inputUsername").disabled = true;
+    document.getElementById("inputTipo").disabled     = true;
+    document.getElementById("inputOrigem").disabled   = true;
 
-  document.getElementById("btnSalvar").textContent     = "💾 Salvar Edição";
-  document.getElementById("btnSalvar").onclick         = handleSalvarEdicao;
-  document.getElementById("btnCancelar").style.display = "inline-flex";
-  document.getElementById("btnEditar").disabled        = true;
-  document.getElementById("editingUserLabel").textContent = `@${found.username}`;
-  document.getElementById("editBanner").classList.add("show");
+    document.getElementById("btnSalvar").textContent     = "💾 Salvar Edição";
+    document.getElementById("btnSalvar").onclick         = handleSalvarEdicao;
+    document.getElementById("btnCancelar").style.display = "inline-flex";
+    document.getElementById("btnEditar").disabled        = true;
+    document.getElementById("editingUserLabel").textContent = `@${found.username}`;
+    document.getElementById("editBanner").classList.add("show");
 
-  window.scrollTo({ top: 0, behavior: "smooth" });
-  showToast(`Editando @${found.username} — altere Status ou Dicas e clique em Salvar Edição.`, "info");
-}
-  // ── Renderiza tabela ───────────────────────────────────
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    showToast(`Editando @${found.username} — altere Status ou Dicas e clique em Salvar Edição.`, "info");
+  }
+
   function renderTable(data) {
     const tbody = document.getElementById("tableBody");
     tbody.innerHTML = "";
@@ -681,14 +658,12 @@
     data.forEach(s => {
       const isEmContato    = s.status === "Em contato";
       const proximoContato = isEmContato ? calcProximoContato(s.dataContato) : "";
-
-      const row      = document.createElement("tr");
-      const usernameEsc = escHtml(s.username);
+      const row            = document.createElement("tr");
+      const usernameEsc    = escHtml(s.username);
 
       row.innerHTML = `
         <td>${s.dataContato || "—"}</td>
-        <td><span class="username-link"
-              onclick="loadUserFromTable('${usernameEsc}')">${usernameEsc}</span></td>
+        <td><span class="username-link" onclick="loadUserFromTable('${usernameEsc}')">${usernameEsc}</span></td>
         <td>${s.tipoConvite || "—"}</td>
         <td><span class="badge ${badgeClass(s.status)}">${s.status || "—"}</span></td>
         <td>${s.origem || "—"}</td>
@@ -700,7 +675,6 @@
     });
   }
 
-  // ── Próximo contato (+2 dias) ──────────────────────────
   function calcProximoContato(dateStr) {
     if (!dateStr) return "";
     const parts = dateStr.toString().split("/");
@@ -711,7 +685,6 @@
     return d.toLocaleDateString("pt-BR");
   }
 
-  // ── Badge ──────────────────────────────────────────────
   function badgeClass(status) {
     return {
       "Em contato":               "badge-contato",
@@ -721,7 +694,6 @@
     }[status] || "";
   }
 
-  // ── Filtros ────────────────────────────────────────────
   function applyFilters() {
     const fData   = document.getElementById("filterData").value.toLowerCase();
     const fUser   = document.getElementById("filterUsername").value.toLowerCase();
@@ -749,7 +721,6 @@
     renderTable(allStreamers);
   }
 
-  // ── Helpers ────────────────────────────────────────────
   function clearForm() {
     ["inputUsername","inputTipo","inputStatus","inputOrigem","inputDicas"]
       .forEach(id => {
