@@ -595,24 +595,39 @@
 
   // ── Carregar usuário da tabela ─────────────────────────
   function loadUserFromTable(username) {
-    if (editMode) handleCancelar();
+  if (editMode) handleCancelar();
 
-    const found = allStreamers.find(s => s.username === username);
-    if (!found) return;
+  const found = allStreamers.find(s => s.username === username);
+  if (!found) return;
 
-    document.getElementById("inputUsername").value = found.username;
-    document.getElementById("inputTipo").value     = found.tipoConvite;
-    document.getElementById("inputStatus").value   = found.status;
-    document.getElementById("inputOrigem").value   = found.origem;
-    document.getElementById("inputDicas").value    = found.dicas || "";
+  // Preenche os campos
+  document.getElementById("inputUsername").value = found.username;
+  document.getElementById("inputTipo").value     = found.tipoConvite;
+  document.getElementById("inputStatus").value   = found.status;
+  document.getElementById("inputOrigem").value   = found.origem;
+  document.getElementById("inputDicas").value    = found.dicas || "";
 
-    showFeedback(`Usuário já contatado — Status: ${found.status}`, "warning");
-    document.getElementById("btnEditar").disabled = false;
+  // Esconde o feedback de "já contatado" (não faz sentido ao clicar na tabela)
+  hideFeedback();
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    showToast(`Dados de @${username} carregados.`, "info");
-  }
+  // Já ativa o modo edição diretamente, sem precisar clicar no botão Editar
+  editMode    = true;
+  editingUser = found.username;
 
+  document.getElementById("inputUsername").disabled = true;
+  document.getElementById("inputTipo").disabled     = true;
+  document.getElementById("inputOrigem").disabled   = true;
+
+  document.getElementById("btnSalvar").textContent     = "💾 Salvar Edição";
+  document.getElementById("btnSalvar").onclick         = handleSalvarEdicao;
+  document.getElementById("btnCancelar").style.display = "inline-flex";
+  document.getElementById("btnEditar").disabled        = true;
+  document.getElementById("editingUserLabel").textContent = `@${found.username}`;
+  document.getElementById("editBanner").classList.add("show");
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  showToast(`Editando @${found.username} — altere Status ou Dicas e clique em Salvar Edição.`, "info");
+}
   // ── Renderiza tabela ───────────────────────────────────
   function renderTable(data) {
     const tbody = document.getElementById("tableBody");
