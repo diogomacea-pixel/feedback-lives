@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Captação de Streamers</title>
+  <style>
+    /* ===================== RESET & BASE ===================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f0f1a;
+      color: #e0e0f0;
+      min-height: 100vh;
+      padding: 24px 16px;
+    }
+
+    /* ===================== HEADER ===================== */
+    header {
+      background: linear-gradient(135deg, #1a1a3e 0%, #2d1b69 100%);
+      border: 1px solid #4a3f8a;
+      border-radius: 16px;
+      padding: 20px 28px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #c9b8ff;
+      letter-spacing: 0.5px;
+    }
+
+    /* ===================== CARDS DE STATUS ===================== */
+    .status-cards {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .status-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 10px 18px;
+      text-align: center;
+      min-width: 130px;
+    }
+
+    .status-card .label {
+      font-size: 0.7rem;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 4px;
+    }
+
+    .status-card .count {
+      font-size: 1.6rem;
+      font-weight: 800;
+    }
+
+    .status-card.contato   .count { color: #60a5fa; }
+    .status-card.dmup      .count { color: #34d399; }
+    .status-card.rejeitou  .count { color: #f87171; }
+
+    /* ===================== FORMULÁRIO ===================== */
+    .form-card {
+      background: #1a1a2e;
+      border: 1px solid #3a3a5c;
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 28px;
+    }
+
+    .form-card h2 {
+      font-size: 1rem;
+      color: #c9b8ff;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #3a3a5c;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 0.78rem;
+      color: #a0a0c0;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      font-weight: 600;
+    }
+
+    input, select, textarea {
+      background: #12122a;
+      border: 1px solid #3a3a5c;
+      border-radius: 8px;
+      color: #e0e0f0;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      width: 100%;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: #7c6dff;
+      box-shadow: 0 0 0 3px rgba(124,109,255,0.15);
+    }
+
+    input:disabled, select:disabled, textarea:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    select option { background: #1a1a2e; }
+
+    textarea { resize: vertical; min-height: 90px; }
+
+    /* Campo username + feedback inline */
+    .username-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .username-wrapper input { flex: 1; }
+
+    .user-feedback {
+      font-size: 0.78rem;
+      padding: 5px 10px;
+      border-radius: 6px;
+      white-space: nowrap;
+      display: none;
+    }
+
+    .user-feedback.warning {
+      display: inline-block;
+      background: rgba(251,191,36,0.15);
+      border: 1px solid #fbbf24;
+      color: #fbbf24;
+    }
+
+    /* ===================== BOTÕES ===================== */
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 11px 24px;
+      border: none;
+      border-radius: 9px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      letter-spacing: 0.4px;
+    }
+
+    .btn:hover  { opacity: 0.85; }
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary { background: linear-gradient(135deg,#7c6dff,#9b59ff); color:#fff; }
+    .btn-edit    { background: linear-gradient(135deg,#f59e0b,#f97316); color:#fff; }
+    .btn-cancel  { background: #3a3a5c; color: #ccc; }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    /* ===================== TOAST ===================== */
+    #toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      padding: 14px 22px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      z-index: 9999;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s, transform 0.3s;
+      max-width: 320px;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #toast.success { background: #065f46; border: 1px solid #34d399; color: #a7f3d0; }
+    #toast.error   { background: #7f1d1d; border: 1px solid #f87171; color: #fecaca; }
+    #toast.info    { background: #1e3a5f; border: 1px solid #60a5fa; color: #bfdbfe; }
+
+    /* ===================== TABELA ===================== */
+    .table-section {
+      background: #1a1a2e;
+      border: 1px solid #3a3a5c;
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .table-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .table-header h2 {
+      font-size: 1rem;
+      color: #c9b8ff;
+    }
+
+    /* Filtros */
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .filters input,
+    .filters select {
+      font-size: 0.82rem;
+      padding: 8px 12px;
+    }
+
+    .btn-clear-filters {
+      background: #3a3a5c;
+      color: #ccc;
+      border: none;
+      border-radius: 7px;
+      padding: 8px 16px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      align-self: end;
+    }
+
+    .btn-clear-filters:hover { opacity: 0.8; }
+
+    /* Tabela */
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    thead tr {
+      background: #12122a;
+    }
+
+    th {
+      padding: 12px 14px;
+      text-align: left;
+      color: #a0a0c0;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      letter-spacing: 0.8px;
+      border-bottom: 1px solid #3a3a5c;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 11px 14px;
+      border-bottom: 1px solid #25253a;
+      vertical-align: middle;
+    }
+
+    tbody tr:hover { background: rgba(124,109,255,0.06); }
+
+    /* Username clicável */
+    .username-link {
+      color: #7c6dff;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .username-link:hover { color: #c9b8ff; }
+
+    /* Badges de status */
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.73rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge-contato    { background: rgba(96,165,250,0.15); color: #60a5fa; border: 1px solid #60a5fa; }
+    .badge-dmup       { background: rgba(52,211,153,0.15); color: #34d399; border: 1px solid #34d399; }
+    .badge-outra      { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid #fbbf24; }
+    .badge-rejeitou   { background: rgba(248,113,113,0.15); color: #f87171; border: 1px solid #f87171; }
+
+    /* Próximo contato */
+    .proximo-contato {
+      color: #fbbf24;
+      font-weight: 600;
+      font-size: 0.82rem;
+    }
+
+    /* Linha do modo edição */
+    .editing-row { background: rgba(245,158,11,0.08) !important; }
+
+    /* Vazio */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #666;
+      font-size: 0.88rem;
+    }
+
+    /* Spinner */
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ===================== MODO EDIÇÃO — banner ===================== */
+    .edit-banner {
+      background: rgba(245,158,11,0.12);
+      border: 1px solid #f59e0b;
+      border-radius: 10px;
+      padding: 10px 16px;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+      color: #fbbf24;
+      display: none;
+    }
+
+    .edit-banner.show { display: block; }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER + CARDS DE STATUS
+============================================================ -->
+<header>
+  <h1>🎯 Captação de Streamers</h1>
+  <div class="status-cards">
+    <div class="status-card contato">
+      <div class="label">Em Contato</div>
+      <div class="count" id="countContato">—</div>
+    </div>
+    <div class="status-card dmup">
+      <div class="label">DM up</div>
+      <div class="count" id="countDMup">—</div>
+    </div>
+    <div class="status-card rejeitou">
+      <div class="label">Rejeitou</div>
+      <div class="count" id="countRejeitou">—</div>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================================
+     FORMULÁRIO
+============================================================ -->
+<div class="form-card">
+  <h2>➕ Novo Registro / Edição</h2>
+
+  <div class="edit-banner" id="editBanner">
+    ✏️ Modo edição ativo — apenas <strong>Status</strong> e <strong>Dicas Apresentadas</strong> podem ser alterados.
+  </div>
+
+  <div class="form-grid">
+
+    <!-- Nome de usuário -->
+    <div class="form-group">
+      <label for="inputUsername">Nome de Usuário (TikTok)</label>
+      <div class="username-wrapper">
+        <input
+          type="text"
+          id="inputUsername"
+          placeholder="@usuario"
+          autocomplete="off"
+        />
+        <span class="user-feedback" id="userFeedback"></span>
+      </div>
+    </div>
+
+    <!-- Tipo de Convite -->
+    <div class="form-group">
+      <label for="inputTipo">Tipo de Convite</label>
+      <select id="inputTipo">
+        <option value="">— Selecione —</option>
+        <option value="Regular">Regular</option>
+        <option value="Premium">Premium</option>
+        <option value="Elite">Elite</option>
+      </select>
+    </div>
+
+    <!-- Status -->
+    <div class="form-group">
+      <label for="inputStatus">Status</label>
+      <select id="inputStatus">
+        <option value="">— Selecione —</option>
+        <option value="Em contato">Em contato</option>
+        <option value="Entrou para a DM up">Entrou para a DM up</option>
+        <option value="Entrou para outra agência">Entrou para outra agência</option>
+        <option value="Rejeitou o convite">Rejeitou o convite</option>
+      </select>
+    </div>
+
+    <!-- Origem -->
+    <div class="form-group">
+      <label for="inputOrigem">Origem</label>
+      <select id="inputOrigem">
+        <option value="">— Selecione —</option>
+        <option value="Live">Live</option>
+        <option value="Vídeos">Vídeos</option>
+      </select>
+    </div>
+
+    <!-- Dicas -->
+    <div class="form-group full-width">
+      <label for="inputDicas">Dicas Apresentadas</label>
+      <textarea id="inputDicas" placeholder="Descreva as dicas apresentadas ao streamer..."></textarea>
+    </div>
+
+  </div>
+
+  <!-- Botões -->
+  <div class="btn-row">
+    <button class="btn btn-primary" id="btnSalvar" onclick="handleSalvar()">
+      💾 Salvar
+    </button>
+    <button class="btn btn-edit" id="btnEditar" onclick="handleEditar()" disabled>
+      ✏️ Editar
+    </button>
+    <button class="btn btn-cancel" id="btnCancelar" onclick="handleCancelar()" style="display:none">
+      ✕ Cancelar Edição
+    </button>
+  </div>
+</div>
+
+<!-- ============================================================
+     TABELA
+============================================================ -->
+<div class="table-section">
+  <div class="table-header">
+    <h2>📋 Streamers Cadastrados</h2>
+    <button class="btn-clear-filters" onclick="clearFilters()">Limpar Filtros</button>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filters">
+    <input  type="text"   id="filterData"     placeholder="Filtrar por Data..."     oninput="applyFilters()" />
+    <input  type="text"   id="filterUsername" placeholder="Filtrar por Usuário..."  oninput="applyFilters()" />
+    <select id="filterStatus"  onchange="applyFilters()">
+      <option value="">Todos os Status</option>
+      <option value="Em contato">Em contato</option>
+      <option value="Entrou para a DM up">Entrou para a DM up</option>
+      <option value="Entrou para outra agência">Entrou para outra agência</option>
+      <option value="Rejeitou o convite">Rejeitou o convite</option>
+    </select>
+    <select id="filterTipo" onchange="applyFilters()">
+      <option value="">Todos os Tipos</option>
+      <option value="Regular">Regular</option>
+      <option value="Premium">Premium</option>
+      <option value="Elite">Elite</option>
+    </select>
+    <select id="filterOrigem" onchange="applyFilters()">
+      <option value="">Todas as Origens</option>
+      <option value="Live">Live</option>
+      <option value="Vídeos">Vídeos</option>
+    </select>
+  </div>
+
+  <!-- Tabela -->
+  <div class="table-wrap">
+    <table id="streamersTable">
+      <thead>
+        <tr>
+          <th>Data do Último Contato</th>
+          <th>Nome de Usuário</th>
+          <th>Tipo</th>
+          <th>Status</th>
+          <th>Origem</th>
+          <th>Próximo Contato</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <tr><td colspan="6" class="empty-state">Carregando dados...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+  // ── Estado global ──────────────────────────────────────────
+  let allStreamers  = [];   // todos os dados vindos da planilha
+  let editMode      = false;
+  let editingUser   = null;
+  let checkTimeout  = null;
+
+  // ── Init ───────────────────────────────────────────────────
+  document.addEventListener("DOMContentLoaded", () => {
+    loadAllData();
+
+    // Verifica usuário enquanto digita (debounce 600ms)
+    document.getElementById("inputUsername").addEventListener("input", () => {
+      clearTimeout(checkTimeout);
+      const val = document.getElementById("inputUsername").value.trim();
+      if (!val) {
+        hideFeedback();
+        return;
+      }
+      checkTimeout = setTimeout(() => liveCheckUser(val), 600);
+    });
+  });
+
+  // ── Verificação ao vivo do username ───────────────────────
+  function liveCheckUser(username) {
+    // Primeiro verifica localmente (sem chamar o servidor)
+    const found = allStreamers.find(
+      s => s.username.toLowerCase() === username.toLowerCase()
+    );
+    if (found) {
+      showFeedbackWarning(`Usuário já contatado — Status: ${found.status}`);
+      document.getElementById("btnEditar").disabled = false;
+    } else {
+      hideFeedback();
+      document.getElementById("btnEditar").disabled = true;
+    }
+  }
+
+  function showFeedbackWarning(msg) {
+    const el = document.getElementById("userFeedback");
+    el.textContent = msg;
+    el.className = "user-feedback warning";
+  }
+
+  function hideFeedback() {
+    const el = document.getElementById("userFeedback");
+    el.textContent = "";
+    el.className = "user-feedback";
+  }
+
+  // ── Carrega todos os dados ─────────────────────────────────
+  function loadAllData() {
+    google.script.run
+      .withSuccessHandler(data => {
+        allStreamers = data;
+        renderTable(allStreamers);
+        updateStatusCounts();
+      })
+      .withFailureHandler(err => {
+        showToast("Erro ao carregar dados: " + err.message, "error");
+      })
+      .getAllStreamers();
+  }
+
+  // ── Contagens de status ────────────────────────────────────
+  function updateStatusCounts() {
+    let contato = 0, dmup = 0, rejeitou = 0;
+    allStreamers.forEach(s => {
+      if (s.status === "Em contato")          contato++;
+      else if (s.status === "Entrou para a DM up")  dmup++;
+      else if (s.status === "Rejeitou o convite")   rejeitou++;
+    });
+    document.getElementById("countContato").textContent  = contato;
+    document.getElementById("countDMup").textContent     = dmup;
+    document.getElementById("countRejeitou").textContent = rejeitou;
+  }
+
+  // ── Salvar ─────────────────────────────────────────────────
+  function handleSalvar() {
+    const username    = document.getElementById("inputUsername").value.trim();
+    const tipoConvite = document.getElementById("inputTipo").value;
+    const status      = document.getElementById("inputStatus").value;
+    const origem      = document.getElementById("inputOrigem").value;
+    const dicas       = document.getElementById("inputDicas").value.trim();
+
+    if (!username || !tipoConvite || !status || !origem) {
+      showToast("Preencha todos os campos obrigatórios.", "error");
+      return;
+    }
+
+    // Bloqueia botão enquanto processa
+    setLoadingBtn("btnSalvar", true);
+
+    google.script.run
+      .withSuccessHandler(res => {
+        setLoadingBtn("btnSalvar", false);
+        if (res.success) {
+          showToast(res.message, "success");
+          clearForm();
+          loadAllData();
+        } else {
+          showToast(res.message, "error");
+        }
+      })
+      .withFailureHandler(err => {
+        setLoadingBtn("btnSalvar", false);
+        showToast("Erro ao salvar: " + err.message, "error");
+      })
+      .saveStreamer({ username, tipoConvite, status, origem, dicas });
+  }
+
+  // ── Editar ─────────────────────────────────────────────────
+  function handleEditar() {
+    const username = document.getElementById("inputUsername").value.trim();
+    if (!username) { showToast("Digite o nome de usuário para editar.", "error"); return; }
+
+    const found = allStreamers.find(
+      s => s.username.toLowerCase() === username.toLowerCase()
+    );
+
+    if (!found) {
+      showToast("Usuário não encontrado.", "error");
+      return;
+    }
+
+    // Preenche o formulário com dados existentes
+    document.getElementById("inputUsername").value    = found.username;
+    document.getElementById("inputTipo").value        = found.tipoConvite;
+    document.getElementById("inputStatus").value      = found.status;
+    document.getElementById("inputOrigem").value      = found.origem;
+    document.getElementById("inputDicas").value       = found.dicas || "";
+
+    // Ativa modo edição
+    editMode    = true;
+    editingUser = found.username;
+
+    // Trava campos não editáveis
+    document.getElementById("inputUsername").disabled = true;
+    document.getElementById("inputTipo").disabled     = true;
+    document.getElementById("inputOrigem").disabled   = true;
+
+    document.getElementById("btnSalvar").textContent  = "💾 Salvar Edição";
+    document.getElementById("btnCancelar").style.display = "inline-flex";
+    document.getElementById("btnEditar").disabled     = true;
+    document.getElementById("editBanner").classList.add("show");
+
+    // Sobrescreve o botão salvar para chamar editStreamer
+    document.getElementById("btnSalvar").onclick = handleSalvarEdicao;
+
+    showToast(`Editando @${found.username}`, "info");
+  }
+
+  // ── Salvar edição ──────────────────────────────────────────
+  function handleSalvarEdicao() {
+    const status = document.getElementById("inputStatus").value;
+    const dicas  = document.getElementById("inputDicas").value.trim();
+
+    if (!status) { showToast("Selecione um Status.", "error"); return; }
+
+    setLoadingBtn("btnSalvar", true);
+
+    google.script.run
+      .withSuccessHandler(res => {
+        setLoadingBtn("btnSalvar", false);
+        if (res.success) {
+          showToast(res.message, "success");
+          handleCancelar();
+          loadAllData();
+        } else {
+          showToast(res.message, "error");
+        }
+      })
+      .withFailureHandler(err => {
+        setLoadingBtn("btnSalvar", false);
+        showToast("Erro ao editar: " + err.message, "error");
+      })
+      .editStreamer({ username: editingUser, status, dicas });
+  }
+
+  // ── Cancelar edição ────────────────────────────────────────
+  function handleCancelar() {
+    editMode    = false;
+    editingUser = null;
+
+    document.getElementById("inputUsername").disabled = false;
+    document.getElementById("inputTipo").disabled     = false;
+    document.getElementById("inputOrigem").disabled   = false;
+
+    document.getElementById("btnSalvar").textContent  = "💾 Salvar";
+    document.getElementById("btnSalvar").onclick      = handleSalvar;
+    document.getElementById("btnCancelar").style.display = "none";
+    document.getElementById("btnEditar").disabled     = true;
+    document.getElementById("editBanner").classList.remove("show");
+
+    clearForm();
+  }
+
+  // ── Clique no usuário da tabela ────────────────────────────
+  function loadUserFromTable(username) {
+    const found = allStreamers.find(s => s.username === username);
+    if (!found) return;
+
+    // Garante que não está em modo edição
+    if (editMode) handleCancelar();
+
+    document.getElementById("inputUsername").value = found.username;
+    document.getElementById("inputTipo").value     = found.tipoConvite;
+    document.getElementById("inputStatus").value   = found.status;
+    document.getElementById("inputOrigem").value   = found.origem;
+    document.getElementById("inputDicas").value    = found.dicas || "";
+
+    showFeedbackWarning(`Usuário já contatado — Status: ${found.status}`);
+    document.getElementById("btnEditar").disabled = false;
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    showToast(`Dados de @${username} carregados.`, "info");
+  }
+
+  // ── Renderiza tabela ───────────────────────────────────────
+  function renderTable(data) {
+    const tbody = document.getElementById("tableBody");
+    tbody.innerHTML = "";
+
+    if (!data || data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" class="empty-state">Nenhum streamer encontrado.</td></tr>`;
+      return;
+    }
+
+    data.forEach(s => {
+      const isEmContato = s.status === "Em contato";
+      const proximoContato = isEmContato ? calcProximoContato(s.dataContato) : "";
+
+      const row = document.createElement("tr");
+      if (editingUser === s.username) row.classList.add("editing-row");
+
+      row.innerHTML = `
+        <td>${s.dataContato || "—"}</td>
+        <td><span class="username-link" onclick="loadUserFromTable('${escapeHtml(s.username)}')">${escapeHtml(s.username)}</span></td>
+        <td>${s.tipoConvite || "—"}</td>
+        <td><span class="badge ${badgeClass(s.status)}">${s.status || "—"}</span></td>
+        <td>${s.origem || "—"}</td>
+        <td>${proximoContato ? `<span class="proximo-contato">📅 ${proximoContato}</span>` : `<span style="color:#555;font-size:0.8rem">—</span>`}</td>
+      `;
+      tbody.appendChild(row);
+    });
+  }
+
+  // ── Cálculo de próximo contato (+2 dias) ──────────────────
+  function calcProximoContato(dateStr) {
+    if (!dateStr) return "";
+    const parts = dateStr.toString().split("/");
+    if (parts.length !== 3) return "";
+    const d = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+    if (isNaN(d)) return "";
+    d.setDate(d.getDate() + 2);
+    return d.toLocaleDateString("pt-BR");
+  }
+
+  // ── Badge de status ────────────────────────────────────────
+  function badgeClass(status) {
+    const map = {
+      "Em contato":              "badge-contato",
+      "Entrou para a DM up":     "badge-dmup",
+      "Entrou para outra agência":"badge-outra",
+      "Rejeitou o convite":      "badge-rejeitou"
+    };
+    return map[status] || "";
+  }
+
+  // ── Filtros ────────────────────────────────────────────────
+  function applyFilters() {
+    const fData     = document.getElementById("filterData").value.toLowerCase();
+    const fUser     = document.getElementById("filterUsername").value.toLowerCase();
+    const fStatus   = document.getElementById("filterStatus").value;
+    const fTipo     = document.getElementById("filterTipo").value;
+    const fOrigem   = document.getElementById("filterOrigem").value;
+
+    const filtered = allStreamers.filter(s => {
+      const matchData   = !fData   || s.dataContato.toString().toLowerCase().includes(fData);
+      const matchUser   = !fUser   || s.username.toLowerCase().includes(fUser);
+      const matchStatus = !fStatus || s.status === fStatus;
+      const matchTipo   = !fTipo   || s.tipoConvite === fTipo;
+      const matchOrigem = !fOrigem || s.origem === fOrigem;
+      return matchData && matchUser && matchStatus && matchTipo && matchOrigem;
+    });
+
+    renderTable(filtered);
+  }
+
+  function clearFilters() {
+    ["filterData","filterUsername","filterStatus","filterTipo","filterOrigem"]
+      .forEach(id => {
+        const el = document.getElementById(id);
+        el.tagName === "SELECT" ? el.selectedIndex = 0 : el.value = "";
+      });
+    renderTable(allStreamers);
+  }
+
+  // ── Helpers ────────────────────────────────────────────────
+  function clearForm() {
+    ["inputUsername","inputTipo","inputStatus","inputOrigem","inputDicas"]
+      .forEach(id => {
+        const el = document.getElementById(id);
+        el.tagName === "SELECT" ? el.selectedIndex = 0 : el.value = "";
+      });
+    hideFeedback();
+    document.getElementById("btnEditar").disabled = true;
+  }
+
+  function setLoadingBtn(id, loading) {
+    const btn = document.getElementById(id);
+    if (loading) {
+      btn._originalHTML = btn.innerHTML;
+      btn.innerHTML = `<span class="spinner"></span> Salvando...`;
+      btn.disabled  = true;
+    } else {
+      btn.innerHTML = btn._originalHTML || btn.innerHTML;
+      btn.disabled  = false;
+    }
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g,"&")
+      .replace(/</g,"<")
+      .replace(/>/g,">")
+      .replace(/"/g,"&quot;");
+  }
+
+  let toastTimer;
+  function showToast(msg, type = "info") {
+    const toast = document.getElementById("toast");
+    toast.textContent = msg;
+    toast.className   = `show ${type}`;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      toast.className = type;
+    }, 3500);
+  }
+</script>
+
+</body>
+</html>
