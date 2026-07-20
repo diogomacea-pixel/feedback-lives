@@ -4,8 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel de Feedback</title>
+
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
@@ -22,6 +27,29 @@
       color: #fff;
       margin-bottom: 20px;
       letter-spacing: 1px;
+    }
+
+    .topo-navegacao {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .btn-captacao {
+      background: rgba(124, 109, 255, 0.15);
+      border: 1px solid #7c6dff;
+      color: #c9b8ff;
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+
+    .btn-captacao:hover {
+      background: rgba(124, 109, 255, 0.3);
     }
 
     .card {
@@ -47,7 +75,9 @@
       gap: 10px;
     }
 
-    .campo-full { grid-column: 1 / -1; }
+    .campo-full {
+      grid-column: 1 / -1;
+    }
 
     label {
       display: block;
@@ -70,9 +100,17 @@
       transition: border-color 0.2s;
     }
 
-    input:focus        { border-color: #7c3aed; }
-    input.input-alerta { border-color: #f59e0b !important; }
-    input.input-ok     { border-color: #059669 !important; }
+    input:focus {
+      border-color: #7c3aed;
+    }
+
+    input.input-alerta {
+      border-color: #f59e0b !important;
+    }
+
+    input.input-ok {
+      border-color: #059669 !important;
+    }
 
     .aviso-username {
       display: none;
@@ -85,7 +123,10 @@
       color: #fde68a;
       line-height: 1.5;
     }
-    .aviso-username.visivel { display: block; }
+
+    .aviso-username.visivel {
+      display: block;
+    }
 
     .verificando-label {
       font-size: 11px;
@@ -93,9 +134,11 @@
       margin-top: 4px;
       display: none;
     }
-    .verificando-label.visivel { display: block; }
 
-    /* Botões de feedback */
+    .verificando-label.visivel {
+      display: block;
+    }
+
     .botoes-grid {
       display: flex;
       flex-wrap: wrap;
@@ -108,30 +151,33 @@
       gap: 4px;
     }
 
-    /* Em modo edição, empilha verticalmente para mostrar controles */
     .modo-edicao .botoes-grid {
       flex-direction: column;
       flex-wrap: nowrap;
     }
 
     .btn-feedback {
-      background: #1e1b4b;
-      color: #c4b5fd;
-      border: 1px solid #4c3f9f;
+      background: rgba(52, 211, 153, 0.15);
+      border: 1px solid #34d399;
+      color: #34d399;
       border-radius: 8px;
-      padding: 7px 12px;
-      font-size: 12px;
+      padding: 7px 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
       cursor: pointer;
+      white-space: nowrap;
       transition: background 0.2s, transform 0.1s;
       text-align: left;
     }
 
     .btn-feedback:hover {
-      background: #2e2475;
+      background: rgba(52, 211, 153, 0.3);
       transform: translateY(-1px);
     }
 
-    .btn-mover {
+    .btn-mover,
+    .btn-delete-item,
+    .btn-editar-item {
       background: transparent;
       border: 1px solid #3a3a5c;
       color: #6b7280;
@@ -143,34 +189,27 @@
       line-height: 1;
       flex-shrink: 0;
     }
-    .btn-mover:hover    { background: #2a2a4a; color: #a78bfa; border-color: #7c3aed; }
-    .btn-mover:disabled { opacity: 0.2; cursor: not-allowed; }
 
-    .btn-delete-item {
-      background: transparent;
-      border: 1px solid #3a3a5c;
-      color: #6b7280;
-      cursor: pointer;
-      font-size: 11px;
-      padding: 3px 7px;
-      border-radius: 4px;
-      transition: all 0.15s;
-      flex-shrink: 0;
+    .btn-mover:hover {
+      background: #2a2a4a;
+      color: #a78bfa;
+      border-color: #7c3aed;
     }
-    .btn-delete-item:hover { color: #ef4444; border-color: #ef4444; }
 
-    .btn-editar-item {
-      background: transparent;
-      border: 1px solid #3a3a5c;
-      color: #6b7280;
-      cursor: pointer;
-      font-size: 11px;
-      padding: 3px 7px;
-      border-radius: 4px;
-      transition: all 0.15s;
-      flex-shrink: 0;
+    .btn-mover:disabled {
+      opacity: 0.2;
+      cursor: not-allowed;
     }
-    .btn-editar-item:hover { color: #f59e0b; border-color: #f59e0b; }
+
+    .btn-delete-item:hover {
+      color: #ef4444;
+      border-color: #ef4444;
+    }
+
+    .btn-editar-item:hover {
+      color: #f59e0b;
+      border-color: #f59e0b;
+    }
 
     .btn-action {
       border: none;
@@ -185,11 +224,23 @@
       gap: 6px;
     }
 
-    .btn-novo   { background: #065f46; color: #6ee7b7; }
-    .btn-novo:hover { background: #047857; }
+    .btn-novo {
+      background: #065f46;
+      color: #6ee7b7;
+    }
 
-    .btn-editar { background: #78350f; color: #fcd34d; }
-    .btn-editar:hover { background: #92400e; }
+    .btn-novo:hover {
+      background: #047857;
+    }
+
+    .btn-editar {
+      background: #78350f;
+      color: #fcd34d;
+    }
+
+    .btn-editar:hover {
+      background: #92400e;
+    }
 
     .btn-salvar {
       background: #7c3aed;
@@ -200,15 +251,27 @@
       font-size: 15px;
       border-radius: 10px;
     }
-    .btn-salvar:hover    { background: #6d28d9; transform: translateY(-1px); }
-    .btn-salvar:disabled { background: #4c3a8a; cursor: not-allowed; transform: none; }
+
+    .btn-salvar:hover {
+      background: #6d28d9;
+      transform: translateY(-1px);
+    }
+
+    .btn-salvar:disabled {
+      background: #4c3a8a;
+      cursor: not-allowed;
+      transform: none;
+    }
 
     .btn-limpar {
       background: #1f2937;
       color: #9ca3af;
       border: 1px solid #374151;
     }
-    .btn-limpar:hover { background: #374151; }
+
+    .btn-limpar:hover {
+      background: #374151;
+    }
 
     textarea {
       width: 100%;
@@ -225,7 +288,10 @@
       font-family: inherit;
       transition: border-color 0.2s;
     }
-    textarea:focus { border-color: #7c3aed; }
+
+    textarea:focus {
+      border-color: #7c3aed;
+    }
 
     .acoes-finais {
       display: flex;
@@ -233,8 +299,15 @@
       flex-wrap: wrap;
       margin-top: 10px;
     }
-    .acoes-finais .btn-salvar { flex: 1; min-width: 140px; }
-    .acoes-finais .btn-limpar { flex: none; }
+
+    .acoes-finais .btn-salvar {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .acoes-finais .btn-limpar {
+      flex: none;
+    }
 
     .status-botoes {
       font-size: 12px;
@@ -243,17 +316,40 @@
       min-height: 18px;
     }
 
-    /* Modais */
+    .card-ultimo-registro {
+      display: none;
+      background: #0d1f17;
+      border: 1px solid #34d399;
+    }
+
+    .card-ultimo-registro h2 {
+      color: #6ee7b7;
+    }
+
+    .card-ultimo-registro p {
+      color: #d1fae5;
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+
+    .card-ultimo-registro span {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0, 0, 0, 0.7);
       z-index: 100;
       align-items: center;
       justify-content: center;
     }
-    .modal-overlay.ativo { display: flex; }
+
+    .modal-overlay.ativo {
+      display: flex;
+    }
 
     .modal {
       background: #1a1a2e;
@@ -271,9 +367,20 @@
       margin-bottom: 16px;
     }
 
-    .modal label { font-size: 13px; margin-bottom: 4px; }
-    .modal input[type="text"], .modal textarea { width: 100%; margin-bottom: 12px; }
-    .modal textarea { height: 180px; }
+    .modal label {
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .modal input[type="text"],
+    .modal textarea {
+      width: 100%;
+      margin-bottom: 12px;
+    }
+
+    .modal textarea {
+      height: 180px;
+    }
 
     .modal-botoes {
       display: flex;
@@ -283,20 +390,30 @@
     }
 
     .btn-cancelar {
-      background: #374151; color: #d1d5db;
-      border: none; border-radius: 8px;
-      padding: 8px 16px; cursor: pointer; font-size: 13px;
+      background: #374151;
+      color: #d1d5db;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 13px;
     }
 
     .btn-confirmar {
-      background: #7c3aed; color: #fff;
-      border: none; border-radius: 8px;
-      padding: 8px 16px; cursor: pointer;
-      font-size: 13px; font-weight: 600;
+      background: #7c3aed;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
     }
-    .btn-confirmar:hover { background: #6d28d9; }
 
-    /* Modal alerta análise recente */
+    .btn-confirmar:hover {
+      background: #6d28d9;
+    }
+
     .modal-alerta p {
       font-size: 14px;
       color: #d1d5db;
@@ -304,635 +421,1392 @@
       line-height: 1.6;
       margin-bottom: 20px;
     }
+
     .modal-alerta .modal-header-icon {
       font-size: 36px;
       text-align: center;
       margin-bottom: 12px;
     }
-    .modal-alerta .modal-botoes { justify-content: center; gap: 12px; }
+
+    .modal-alerta .modal-botoes {
+      justify-content: center;
+      gap: 12px;
+    }
 
     .btn-continuar {
-      background: #f59e0b; color: #1a1a2e;
-      border: none; border-radius: 8px;
-      padding: 10px 20px; cursor: pointer;
-      font-size: 13px; font-weight: 700;
+      background: #f59e0b;
+      color: #1a1a2e;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
     }
-    .btn-continuar:hover { background: #d97706; }
 
-    /* Toast */
+    .btn-continuar:hover {
+      background: #d97706;
+    }
+
     .toast {
       position: fixed;
-      bottom: 20px; right: 20px;
-      background: #065f46; color: #6ee7b7;
-      padding: 12px 20px; border-radius: 10px;
-      font-size: 13px; font-weight: 600;
-      opacity: 0; transform: translateY(10px);
-      transition: all 0.3s; z-index: 200;
+      bottom: 20px;
+      right: 20px;
+      background: #065f46;
+      color: #6ee7b7;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s;
+      z-index: 200;
       pointer-events: none;
+      max-width: calc(100vw - 40px);
     }
-    .toast.visivel  { opacity: 1; transform: translateY(0); }
-    .toast.erro     { background: #7f1d1d; color: #fca5a5; }
-    .toast.enviando { background: #1e3a5f; color: #93c5fd; }
-    .toast.aviso    { background: #78350f; color: #fde68a; }
+
+    .toast.visivel {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .toast.erro {
+      background: #7f1d1d;
+      color: #fca5a5;
+    }
+
+    .toast.enviando {
+      background: #1e3a5f;
+      color: #93c5fd;
+    }
+
+    .toast.aviso {
+      background: #78350f;
+      color: #fde68a;
+    }
 
     .spinner {
       display: inline-block;
-      width: 14px; height: 14px;
-      border: 2px solid rgba(255,255,255,0.3);
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
       border-top-color: #fff;
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
     @media (max-width: 500px) {
-      .campos-grid { grid-template-columns: 1fr; }
-      .campo-full  { grid-column: 1; }
+      .campos-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .campo-full {
+        grid-column: 1;
+      }
+
+      .toast {
+        left: 20px;
+        right: 20px;
+        bottom: 20px;
+        text-align: center;
+      }
     }
-
-        /* ... outros estilos existentes ... */
-
-    .btn-feedback {
-      background: rgba(52,211,153,0.15);
-      border: 1px solid #34d399;
-      color: #34d399;
-      border-radius: 8px;
-      padding: 7px 14px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      text-decoration: none;
-      white-space: nowrap;
-      transition: background 0.2s;
-    }
-
-    .btn-feedback:hover {
-      background: rgba(52,211,153,0.3);
-    }
-
   </style>
-  <a 
-   href="https://diogomacea-pixel.github.io/feedback-lives/captacao" 
-   class="btn-captacao""
-  style="
-    background: rgba(124,109,255,0.15);
-    border: 1px solid #7c6dff;
-    color: #c9b8ff;
-    border-radius: 8px;
-    padding: 7px 14px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    text-decoration: none;
-    white-space: nowrap;
-    transition: background 0.2s;
-  "
-  onmouseover="this.style.background='rgba(124,109,255,0.3)'"
-  onmouseout="this.style.background='rgba(124,109,255,0.15)'"
->
-  🎯 Captação
-</a>
 </head>
+
 <body>
 
-<h1>🎯 Painel de Feedback</h1>
-
-<!-- Dados da Live -->
-<div class="card">
-  <h2>📋 Dados da Live</h2>
-  <div class="campos-grid">
-    <div class="campo-full">
-      <label>Username do Streamer (@)</label>
-      <input id="username" type="text" placeholder="@usuario_tiktok" oninput="agendarVerificacao()">
-      <div class="verificando-label" id="verificandoLabel">🔍 Verificando...</div>
-      <div class="aviso-username" id="avisoUsername"></div>
-    </div>
-    <div>
-      <label>Data da Live</label>
-      <input id="dataLive" type="date">
-    </div>
-    <div>
-      <label>Hora da Live</label>
-      <input id="horaLive" type="time">
-    </div>
+  <div class="topo-navegacao">
+    <a
+      href="https://diogomacea-pixel.github.io/feedback-lives/captacao"
+      class="btn-captacao"
+      onmouseover="this.style.background='rgba(124,109,255,0.3)'"
+      onmouseout="this.style.background='rgba(124,109,255,0.15)'"
+    >
+      🎯 Captação
+    </a>
   </div>
-</div>
 
-<!-- Botões de Feedback -->
-<div class="card" id="cardBotoes">
-  <h2>💬 Pontos de Feedback</h2>
-  <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
-    <button class="btn-action btn-novo"   onclick="abrirModalNovo()">➕ Novo Texto</button>
-    <button class="btn-action btn-editar" id="btnModoEdicao" onclick="toggleModoEdicao()">✏️ Editar Botões</button>
-  </div>
-  <div class="status-botoes" id="statusBotoes">⏳ Carregando textos...</div>
-  <div class="botoes-grid" id="containerBotoes"></div>
-</div>
+  <h1>🎯 Painel de Feedback</h1>
 
-<!-- Feedback Final -->
-<div class="card">
-  <h2>📝 Feedback Final</h2>
-  <textarea id="textoFinal"></textarea>
-  <div class="acoes-finais">
-    <button class="btn-action btn-salvar" id="btnSalvar" onclick="salvarFeedback()">
-      💾 Salvar Feedback
-    </button>
-    <button class="btn-action btn-limpar" onclick="limparTudo()">🗑️ Limpar</button>
-  </div>
-</div>
+  <!-- Dados da Live -->
+  <div class="card">
+    <h2>📋 Dados da Live</h2>
 
-<!-- Modal Novo / Editar Botão -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <h3 id="modalTitulo">Novo Texto de Feedback</h3>
-    <label>Nome do botão</label>
-    <input type="text" id="modalNome" placeholder="Ex.: Áudio – Ruído de fundo">
-    <label>Texto completo</label>
-    <textarea id="modalTexto" placeholder="Digite o texto que será inserido ao clicar no botão..."></textarea>
-    <div class="modal-botoes">
-      <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
-      <button class="btn-confirmar" id="btnConfirmarModal" onclick="confirmarModal()">Salvar</button>
+    <div class="campos-grid">
+      <div class="campo-full">
+        <label for="username">Username do Streamer (@)</label>
+
+        <input
+          id="username"
+          type="text"
+          placeholder="@usuario_tiktok"
+          oninput="agendarVerificacao()"
+        >
+
+        <div class="verificando-label" id="verificandoLabel">
+          🔍 Verificando...
+        </div>
+
+        <div class="aviso-username" id="avisoUsername"></div>
+      </div>
+
+      <div>
+        <label for="dataLive">Data da Live</label>
+        <input id="dataLive" type="date">
+      </div>
+
+      <div>
+        <label for="horaLive">Hora da Live</label>
+        <input id="horaLive" type="time">
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Modal Alerta Análise Recente -->
-<div class="modal-overlay" id="modalAlerta">
-  <div class="modal modal-alerta">
-    <div class="modal-header-icon">⚠️</div>
-    <h3 style="text-align:center; margin-bottom:12px;">Análise Recente Detectada</h3>
-    <p id="modalAlertaTexto"></p>
-    <div class="modal-botoes">
-      <button class="btn-cancelar" onclick="fecharModalAlerta()">Cancelar</button>
-      <button class="btn-continuar" onclick="confirmarSalvarMesmoAssim()">Salvar mesmo assim</button>
+  <!-- Botões de Feedback -->
+  <div class="card" id="cardBotoes">
+    <h2>💬 Pontos de Feedback</h2>
+
+    <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+      <button
+        class="btn-action btn-novo"
+        type="button"
+        onclick="abrirModalNovo()"
+      >
+        ➕ Novo Texto
+      </button>
+
+      <button
+        class="btn-action btn-editar"
+        id="btnModoEdicao"
+        type="button"
+        onclick="toggleModoEdicao()"
+      >
+        ✏️ Editar Botões
+      </button>
+    </div>
+
+    <div class="status-botoes" id="statusBotoes">
+      ⏳ Carregando textos...
+    </div>
+
+    <div class="botoes-grid" id="containerBotoes"></div>
+  </div>
+
+  <!-- Feedback Final -->
+  <div class="card">
+    <h2>📝 Feedback Final</h2>
+
+    <textarea id="textoFinal"></textarea>
+
+    <div class="acoes-finais">
+      <button
+        class="btn-action btn-salvar"
+        id="btnSalvar"
+        type="button"
+        onclick="salvarFeedback()"
+      >
+        💾 Salvar Feedback
+      </button>
+
+      <button
+        class="btn-action btn-limpar"
+        type="button"
+        onclick="limparTudo()"
+      >
+        🗑️ Limpar
+      </button>
     </div>
   </div>
-</div>
 
-<!-- Toast -->
-<div class="toast" id="toast"></div>
+  <!-- Último Registro Salvo -->
+  <div class="card card-ultimo-registro" id="ultimoRegistro">
+    <h2>📌 Último registro salvo</h2>
 
-<script>
-  // ══════════════════════════════════════════════
-  // COLE AQUI A URL DO SEU GOOGLE APPS SCRIPT
-  // ══════════════════════════════════════════════
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxu5rDZRx13ZiY1diGB9JYEtaXtKb3GGu_VkNHrwrMBhK4RUjYNsJDs2u3f3Pv31ZbJ/exec';
-  // ══════════════════════════════════════════════
+    <p>
+      <strong>Timestamp:</strong>
+      <span id="lastTimestamp"></span>
+    </p>
 
-  const textosDefault = [
-    { id: 'AUDIO_RUIDO',        nome: 'Áudio – Ruído de fundo',       texto: `- Áudio: Ao fundo é possível ouvir ruídos constantes (como TV, rádio ou ventilador). Isso gera muito barulho e faz com que as pessoas não fiquem na live.\n  Tente encontrar um local mais tranquilo, sem interferência de outros sons.\n\n` },
-    { id: 'AUDIO_BAIXO',        nome: 'Áudio – Volume baixo',          texto: `- Áudio: O volume da sua voz está um pouco baixo em relação ao restante do som da live.\n  Faça um teste rápido antes de começar, verificando se sua voz está clara e em destaque.\n\n` },
-    { id: 'ILUMINACAO_BOA',     nome: 'Iluminação – Boa',              texto: `- Iluminação: Muito boa! No futuro, valerá a pena investir em uma ring light para reduzir a quantidade de sombras.\n\n` },
-    { id: 'ILUMINACAO_FRACA',   nome: 'Iluminação – Fraca',            texto: `- Iluminação: A iluminação está um pouco fraca, o que dificulta para o público ver seu rosto com clareza.\n  Use uma fonte de luz voltada para o seu rosto e evite ficar contra a luz.\n\n` },
-    { id: 'PERGUNTAS_FECHADAS', nome: 'Perguntas fechadas',            texto: `- Perguntas fechadas: Prefira perguntas abertas, como: "Como foi seu dia?", "O que você vai fazer hoje?". Isso incentiva mais interação e aumenta o engajamento.\n\n` },
-    { id: 'REPETICAO_PALAVRAS', nome: 'Repetição de palavras',         texto: `- Repetição de palavras: Evite repetir a mesma expressão muitas vezes seguidas. O TikTok pode interpretar isso como comportamento automatizado e prejudicar o alcance da live.\n\n` },
-    { id: 'POSICAO_CELULAR',    nome: 'Posição do celular',            texto: `- Posição do celular: Apoie o aparelho em uma superfície fixa, deixando suas mãos livres. Movimentar as mãos traz mais naturalidade e prende melhor a atenção do público.\n\n` },
-    { id: 'POSICAO_CAMERA',     nome: 'Enquadramento da câmera',       texto: `- Posição da câmera: Fique centralizado na imagem, deixando um pouco de espaço acima da cabeça e nas laterais para um enquadramento mais agradável.\n\n` },
-    { id: 'DURACAO_LIVE',       nome: 'Duração mínima',                texto: `- Duração da live: Procure que cada live tenha pelo menos 2 horas de duração para maximizar o alcance no TikTok.\n\n` },
-    { id: 'MUTAR_OPONENTE',     nome: 'Mutar oponente',                texto: `- Mutar o oponente: Quando não houver interação com o oponente, tente interagir com ele. Caso não esteja aberto, avise que irá mutar o áudio e peça para sinalizar quando quiser que você desmute.\n\n` },
-    { id: 'VIDEOS_POSTADOS',    nome: 'Vídeos postados',               texto: `- Vídeos postados: Ótimo ritmo de postagem! Lembre-se de adicionar uma boa descrição e hashtags em alta em cada vídeo para atrair mais pessoas.\n\n` },
-    { id: 'BIOGRAFIA',          nome: 'Biografia do perfil',           texto: `- Biografia do perfil: Crie uma bio que apresente quem você é. Exemplo:\n  [Seu nome] | Streamer\n  Autêntica, divertida e sem filtro.\n  Live todo dia às XXh – vem rir e fazer parte da família!\n\n` },
-    { id: 'NOME_USUARIO',       nome: 'Nome de usuário / exibição',    texto: `- Nome de usuário e exibição: Quando esses nomes são diferentes gera confusão. Adote o mesmo nome nos dois campos.\n\n` }
-  ];
+    <p>
+      <strong>Username:</strong>
+      <span id="lastUsername"></span>
+    </p>
+  </div>
 
-  let botoes                   = [];
-  let modoEdicao               = false;
-  let modalEditId              = null;
-  let debounceTimer            = null;
-  let dadosPendentesParaSalvar = null;
+  <!-- Modal Novo / Editar Botão -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <h3 id="modalTitulo">Novo Texto de Feedback</h3>
 
-  // ─── INIT ────────────────────────────────────────────
-  function init() {
-    preencherDataHora();
-    gerarIntroducao();
-    carregarBotoesDoServidor();
-  }
+      <label for="modalNome">Nome do botão</label>
+      <input
+        type="text"
+        id="modalNome"
+        placeholder="Ex.: Áudio – Ruído de fundo"
+      >
 
-  // ─── DATA / HORA ─────────────────────────────────────
-  function preencherDataHora() {
-    const agora = new Date();
-    document.getElementById('dataLive').value = agora.toISOString().slice(0, 10);
-    const hh = String(agora.getHours()).padStart(2, '0');
-    const mm = String(agora.getMinutes()).padStart(2, '0');
-    document.getElementById('horaLive').value = `${hh}:${mm}`;
-  }
+      <label for="modalTexto">Texto completo</label>
+      <textarea
+        id="modalTexto"
+        placeholder="Digite o texto que será inserido ao clicar no botão..."
+      ></textarea>
 
-  // ─── CARREGAR BOTÕES DO SERVIDOR ─────────────────────
-  async function carregarBotoesDoServidor() {
-    setStatusBotoes('⏳ Carregando textos...');
-    try {
-      const resp = await fetch(`${APPS_SCRIPT_URL}?acao=listarBotoes`);
-      const json = await resp.json();
+      <div class="modal-botoes">
+        <button
+          class="btn-cancelar"
+          type="button"
+          onclick="fecharModal()"
+        >
+          Cancelar
+        </button>
 
-      if (json.status === 'ok' && json.botoes.length > 0) {
-        botoes = json.botoes;
-        setStatusBotoes('');
-      } else {
-        // Primeira vez: sobe os textos default para a planilha
-        setStatusBotoes('⏳ Configurando textos padrão...');
-        await subirDefaultsParaServidor();
-        setStatusBotoes('');
+        <button
+          class="btn-confirmar"
+          id="btnConfirmarModal"
+          type="button"
+          onclick="confirmarModal()"
+        >
+          Salvar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Alerta Análise Recente -->
+  <div class="modal-overlay" id="modalAlerta">
+    <div class="modal modal-alerta">
+      <div class="modal-header-icon">⚠️</div>
+
+      <h3 style="text-align:center; margin-bottom:12px;">
+        Análise Recente Detectada
+      </h3>
+
+      <p id="modalAlertaTexto"></p>
+
+      <div class="modal-botoes">
+        <button
+          class="btn-cancelar"
+          type="button"
+          onclick="fecharModalAlerta()"
+        >
+          Cancelar
+        </button>
+
+        <button
+          class="btn-continuar"
+          type="button"
+          onclick="confirmarSalvarMesmoAssim()"
+        >
+          Salvar mesmo assim
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ==================================================
+    // URL DO GOOGLE APPS SCRIPT
+    // ==================================================
+    const APPS_SCRIPT_URL =
+      'https://script.google.com/macros/s/AKfycbxu5rDZRx13ZiY1diGB9JYEtaXtKb3GGu_VkNHrwrMBhK4RUjYNsJDs2u3f3Pv31ZbJ/exec';
+    // ==================================================
+
+    const textosDefault = [
+      {
+        id: 'AUDIO_RUIDO',
+        nome: 'Áudio – Ruído de fundo',
+        texto: `- Áudio: Ao fundo é possível ouvir ruídos constantes (como TV, rádio ou ventilador). Isso gera muito barulho e faz com que as pessoas não fiquem na live.
+  Tente encontrar um local mais tranquilo, sem interferência de outros sons.
+
+`
+      },
+      {
+        id: 'AUDIO_BAIXO',
+        nome: 'Áudio – Volume baixo',
+        texto: `- Áudio: O volume da sua voz está um pouco baixo em relação ao restante do som da live.
+  Faça um teste rápido antes de começar, verificando se sua voz está clara e em destaque.
+
+`
+      },
+      {
+        id: 'ILUMINACAO_BOA',
+        nome: 'Iluminação – Boa',
+        texto: `- Iluminação: Muito boa! No futuro, valerá a pena investir em uma ring light para reduzir a quantidade de sombras.
+
+`
+      },
+      {
+        id: 'ILUMINACAO_FRACA',
+        nome: 'Iluminação – Fraca',
+        texto: `- Iluminação: A iluminação está um pouco fraca, o que dificulta para o público ver seu rosto com clareza.
+  Use uma fonte de luz voltada para o seu rosto e evite ficar contra a luz.
+
+`
+      },
+      {
+        id: 'PERGUNTAS_FECHADAS',
+        nome: 'Perguntas fechadas',
+        texto: `- Perguntas fechadas: Prefira perguntas abertas, como: "Como foi seu dia?", "O que você vai fazer hoje?". Isso incentiva mais interação e aumenta o engajamento.
+
+`
+      },
+      {
+        id: 'REPETICAO_PALAVRAS',
+        nome: 'Repetição de palavras',
+        texto: `- Repetição de palavras: Evite repetir a mesma expressão muitas vezes seguidas. O TikTok pode interpretar isso como comportamento automatizado e prejudicar o alcance da live.
+
+`
+      },
+      {
+        id: 'POSICAO_CELULAR',
+        nome: 'Posição do celular',
+        texto: `- Posição do celular: Apoie o aparelho em uma superfície fixa, deixando suas mãos livres. Movimentar as mãos traz mais naturalidade e prende melhor a atenção do público.
+
+`
+      },
+      {
+        id: 'POSICAO_CAMERA',
+        nome: 'Enquadramento da câmera',
+        texto: `- Posição da câmera: Fique centralizado na imagem, deixando um pouco de espaço acima da cabeça e nas laterais para um enquadramento mais agradável.
+
+`
+      },
+      {
+        id: 'DURACAO_LIVE',
+        nome: 'Duração mínima',
+        texto: `- Duração da live: Procure que cada live tenha pelo menos 2 horas de duração para maximizar o alcance no TikTok.
+
+`
+      },
+      {
+        id: 'MUTAR_OPONENTE',
+        nome: 'Mutar oponente',
+        texto: `- Mutar o oponente: Quando não houver interação com o oponente, tente interagir com ele. Caso não esteja aberto, avise que irá mutar o áudio e peça para sinalizar quando quiser que você desmute.
+
+`
+      },
+      {
+        id: 'VIDEOS_POSTADOS',
+        nome: 'Vídeos postados',
+        texto: `- Vídeos postados: Ótimo ritmo de postagem! Lembre-se de adicionar uma boa descrição e hashtags em alta em cada vídeo para atrair mais pessoas.
+
+`
+      },
+      {
+        id: 'BIOGRAFIA',
+        nome: 'Biografia do perfil',
+        texto: `- Biografia do perfil: Crie uma bio que apresente quem você é. Exemplo:
+  [Seu nome] | Streamer
+  Autêntica, divertida e sem filtro.
+  Live todo dia às XXh – vem rir e fazer parte da família!
+
+`
+      },
+      {
+        id: 'NOME_USUARIO',
+        nome: 'Nome de usuário / exibição',
+        texto: `- Nome de usuário e exibição: Quando esses nomes são diferentes gera confusão. Adote o mesmo nome nos dois campos.
+
+`
       }
-    } catch (err) {
-      setStatusBotoes('⚠️ Não foi possível carregar os textos. Usando modo offline.');
-      botoes = textosDefault.map(b => ({ ...b }));
-      console.warn(err);
-    }
-    renderizarBotoes();
-  }
+    ];
 
-  async function subirDefaultsParaServidor() {
-    for (let i = 0; i < textosDefault.length; i++) {
-      const b = textosDefault[i];
+    let botoes = [];
+    let modoEdicao = false;
+    let modalEditId = null;
+    let debounceTimer = null;
+    let dadosPendentesParaSalvar = null;
+    let toastTimer = null;
+
+    // ─── INIT ──────────────────────────────────────────
+
+    function init() {
+      preencherDataHora();
+      gerarIntroducao();
+      carregarBotoesDoServidor();
+    }
+
+    // ─── UTILITÁRIOS ───────────────────────────────────
+
+    function escaparHtml(valor) {
+      return String(valor ?? '').replace(/[&<>"']/g, function(caractere) {
+        const mapa = {
+          '&': '&',
+          '<': '<',
+          '>': '>',
+          '"': '&quot;',
+          "'": '&#039;'
+        };
+
+        return mapa[caractere];
+      });
+    }
+
+    function mostrarToast(msg, tipo = '') {
+      const toast = document.getElementById('toast');
+
+      clearTimeout(toastTimer);
+
+      toast.textContent = msg;
+      toast.className = `toast visivel ${tipo}`;
+
+      toastTimer = setTimeout(function() {
+        toast.className = 'toast';
+      }, 3500);
+    }
+
+    function setStatusBotoes(msg) {
+      document.getElementById('statusBotoes').textContent = msg;
+    }
+
+    // ─── DATA E HORA ───────────────────────────────────
+
+    function preencherDataHora() {
+      const agora = new Date();
+
+      const ano = agora.getFullYear();
+      const mes = String(agora.getMonth() + 1).padStart(2, '0');
+      const dia = String(agora.getDate()).padStart(2, '0');
+
+      const horas = String(agora.getHours()).padStart(2, '0');
+      const minutos = String(agora.getMinutes()).padStart(2, '0');
+
+      document.getElementById('dataLive').value =
+        `${ano}-${mes}-${dia}`;
+
+      document.getElementById('horaLive').value =
+        `${horas}:${minutos}`;
+    }
+
+    // ─── CARREGAR BOTÕES DO SERVIDOR ───────────────────
+
+    async function carregarBotoesDoServidor() {
+      setStatusBotoes('⏳ Carregando textos...');
+
       try {
-        const params = new URLSearchParams({
-          acao:  'salvarBotao',
-          id:    b.id,
-          nome:  b.nome,
-          texto: b.texto,
-          ordem: i + 1
-        });
-        await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+        const resp = await fetch(
+          `${APPS_SCRIPT_URL}?acao=listarBotoes`,
+          {
+            method: 'GET',
+            cache: 'no-store'
+          }
+        );
+
+        if (!resp.ok) {
+          throw new Error('Erro HTTP ao carregar os botões.');
+        }
+
+        const json = await resp.json();
+
+        if (
+          json.status === 'ok' &&
+          Array.isArray(json.botoes) &&
+          json.botoes.length > 0
+        ) {
+          botoes = json.botoes;
+          setStatusBotoes('');
+        } else {
+          setStatusBotoes('⏳ Configurando textos padrão...');
+          await subirDefaultsParaServidor();
+          setStatusBotoes('');
+        }
+
       } catch (err) {
-        console.warn('Erro ao subir botão default:', b.id, err);
+        setStatusBotoes(
+          '⚠️ Não foi possível carregar os textos. Usando modo offline.'
+        );
+
+        botoes = textosDefault.map(function(botao) {
+          return { ...botao };
+        });
+
+        console.warn('Erro ao carregar botões:', err);
       }
-    }
-    botoes = textosDefault.map((b, i) => ({ ...b, ordem: i + 1 }));
-  }
 
-  function setStatusBotoes(msg) {
-    document.getElementById('statusBotoes').textContent = msg;
-  }
-
-  // ─── RENDERIZAR BOTÕES ───────────────────────────────
-  function renderizarBotoes() {
-    const container = document.getElementById('containerBotoes');
-    const card      = document.getElementById('cardBotoes');
-    container.innerHTML = '';
-
-    if (modoEdicao) {
-      card.classList.add('modo-edicao');
-    } else {
-      card.classList.remove('modo-edicao');
+      renderizarBotoes();
     }
 
-    botoes.forEach((b, idx) => {
-      const linha = document.createElement('div');
-      linha.className = 'botao-linha';
+    async function subirDefaultsParaServidor() {
+      for (let i = 0; i < textosDefault.length; i++) {
+        const botao = textosDefault[i];
 
-      const btn = document.createElement('button');
-      btn.className   = 'btn-feedback';
-      btn.textContent = b.nome;
-      btn.style.flex  = '1';
-      btn.onclick     = () => modoEdicao ? abrirModalEditar(b.id) : addTexto(b.texto);
-      linha.appendChild(btn);
+        try {
+          const params = new URLSearchParams({
+            acao: 'salvarBotao',
+            id: botao.id,
+            nome: botao.nome,
+            texto: botao.texto,
+            ordem: String(i + 1)
+          });
+
+          const resp = await fetch(
+            `${APPS_SCRIPT_URL}?${params.toString()}`,
+            {
+              method: 'GET',
+              cache: 'no-store'
+            }
+          );
+
+          if (!resp.ok) {
+            throw new Error(`Erro ao salvar o botão ${botao.id}.`);
+          }
+
+        } catch (err) {
+          console.warn(
+            'Erro ao subir botão padrão:',
+            botao.id,
+            err
+          );
+        }
+      }
+
+      botoes = textosDefault.map(function(botao, indice) {
+        return {
+          ...botao,
+          ordem: indice + 1
+        };
+      });
+    }
+
+    // ─── RENDERIZAR BOTÕES ─────────────────────────────
+
+    function renderizarBotoes() {
+      const container = document.getElementById('containerBotoes');
+      const card = document.getElementById('cardBotoes');
+
+      container.innerHTML = '';
 
       if (modoEdicao) {
-        // Botão editar
-        const btnEdit = document.createElement('button');
-        btnEdit.className   = 'btn-editar-item';
-        btnEdit.title       = 'Editar';
-        btnEdit.textContent = '✏️';
-        btnEdit.onclick     = (e) => { e.stopPropagation(); abrirModalEditar(b.id); };
-        linha.appendChild(btnEdit);
-
-        // Botão subir
-        const btnUp = document.createElement('button');
-        btnUp.className   = 'btn-mover';
-        btnUp.title       = 'Mover para cima';
-        btnUp.textContent = '↑';
-        btnUp.disabled    = idx === 0;
-        btnUp.onclick     = (e) => { e.stopPropagation(); moverBotao(idx, -1); };
-        linha.appendChild(btnUp);
-
-        // Botão descer
-        const btnDown = document.createElement('button');
-        btnDown.className   = 'btn-mover';
-        btnDown.title       = 'Mover para baixo';
-        btnDown.textContent = '↓';
-        btnDown.disabled    = idx === botoes.length - 1;
-        btnDown.onclick     = (e) => { e.stopPropagation(); moverBotao(idx, 1); };
-        linha.appendChild(btnDown);
-
-        // Botão excluir
-        const btnDel = document.createElement('button');
-        btnDel.className   = 'btn-delete-item';
-        btnDel.title       = 'Excluir';
-        btnDel.textContent = '✕';
-        btnDel.onclick     = (e) => { e.stopPropagation(); deletarBotao(b.id); };
-        linha.appendChild(btnDel);
+        card.classList.add('modo-edicao');
+      } else {
+        card.classList.remove('modo-edicao');
       }
 
-      container.appendChild(linha);
-    });
-  }
+      botoes.forEach(function(botao, indice) {
+        const linha = document.createElement('div');
+        linha.className = 'botao-linha';
 
-function addTexto(texto) {
-  const ta = document.getElementById('textoFinal');
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn-feedback';
+        btn.textContent = botao.nome;
+        btn.style.flex = '1';
 
-  // Remove quebras de linha extras do final do texto a inserir
-  const textoLimpo = texto.trimEnd();
+        btn.onclick = function() {
+          if (modoEdicao) {
+            abrirModalEditar(botao.id);
+          } else {
+            addTexto(botao.texto);
+          }
+        };
 
-  // Garante exatamente uma linha em branco entre blocos
-  if (ta.value && !ta.value.endsWith('\n\n')) {
-    if (ta.value.endsWith('\n')) {
-      ta.value += '\n';
-    } else {
-      ta.value += '\n\n';
+        linha.appendChild(btn);
+
+        if (modoEdicao) {
+          const btnEditar = document.createElement('button');
+          btnEditar.type = 'button';
+          btnEditar.className = 'btn-editar-item';
+          btnEditar.title = 'Editar';
+          btnEditar.textContent = '✏️';
+
+          btnEditar.onclick = function(evento) {
+            evento.stopPropagation();
+            abrirModalEditar(botao.id);
+          };
+
+          linha.appendChild(btnEditar);
+
+          const btnSubir = document.createElement('button');
+          btnSubir.type = 'button';
+          btnSubir.className = 'btn-mover';
+          btnSubir.title = 'Mover para cima';
+          btnSubir.textContent = '↑';
+          btnSubir.disabled = indice === 0;
+
+          btnSubir.onclick = function(evento) {
+            evento.stopPropagation();
+            moverBotao(indice, -1);
+          };
+
+          linha.appendChild(btnSubir);
+
+          const btnDescer = document.createElement('button');
+          btnDescer.type = 'button';
+          btnDescer.className = 'btn-mover';
+          btnDescer.title = 'Mover para baixo';
+          btnDescer.textContent = '↓';
+          btnDescer.disabled = indice === botoes.length - 1;
+
+          btnDescer.onclick = function(evento) {
+            evento.stopPropagation();
+            moverBotao(indice, 1);
+          };
+
+          linha.appendChild(btnDescer);
+
+          const btnExcluir = document.createElement('button');
+          btnExcluir.type = 'button';
+          btnExcluir.className = 'btn-delete-item';
+          btnExcluir.title = 'Excluir';
+          btnExcluir.textContent = '✕';
+
+          btnExcluir.onclick = function(evento) {
+            evento.stopPropagation();
+            deletarBotao(botao.id);
+          };
+
+          linha.appendChild(btnExcluir);
+        }
+
+        container.appendChild(linha);
+      });
     }
-  }
 
-  ta.value += textoLimpo + '\n\n';
-  ta.scrollTop = ta.scrollHeight;
-}
-  
-  // ─── MOVER BOTÃO ─────────────────────────────────────
-  async function moverBotao(idx, direcao) {
-    const novoIdx = idx + direcao;
-    if (novoIdx < 0 || novoIdx >= botoes.length) return;
+    function addTexto(texto) {
+      const textarea = document.getElementById('textoFinal');
+      const textoLimpo = texto.trimEnd();
 
-    // Troca localmente
-    [botoes[idx], botoes[novoIdx]] = [botoes[novoIdx], botoes[idx]];
-    renderizarBotoes();
+      if (
+        textarea.value &&
+        !textarea.value.endsWith('\n\n')
+      ) {
+        if (textarea.value.endsWith('\n')) {
+          textarea.value += '\n';
+        } else {
+          textarea.value += '\n\n';
+        }
+      }
 
-    // Salva nova ordem no servidor
-    try {
-      const ids = botoes.map(b => b.id).join(',');
-      const params = new URLSearchParams({ acao: 'reordenar', ids });
-      await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
-    } catch (err) {
-      mostrarToast('Erro ao salvar ordem. Tente novamente.', 'erro');
-      console.error(err);
+      textarea.value += textoLimpo + '\n\n';
+      textarea.scrollTop = textarea.scrollHeight;
     }
-  }
 
-  // ─── MODO EDIÇÃO ─────────────────────────────────────
-  function toggleModoEdicao() {
-    modoEdicao = !modoEdicao;
-    const btn = document.getElementById('btnModoEdicao');
-    if (modoEdicao) {
-      btn.textContent     = '✅ Concluir Edição';
-      btn.style.background = '#064e3b';
-      btn.style.color      = '#6ee7b7';
-    } else {
-      btn.textContent     = '✏️ Editar Botões';
-      btn.style.background = '';
-      btn.style.color      = '';
+    // ─── MOVER BOTÃO ───────────────────────────────────
+
+    async function moverBotao(indice, direcao) {
+      const novoIndice = indice + direcao;
+
+      if (
+        novoIndice < 0 ||
+        novoIndice >= botoes.length
+      ) {
+        return;
+      }
+
+      [
+        botoes[indice],
+        botoes[novoIndice]
+      ] = [
+        botoes[novoIndice],
+        botoes[indice]
+      ];
+
+      renderizarBotoes();
+
+      try {
+        const ids = botoes
+          .map(function(botao) {
+            return botao.id;
+          })
+          .join(',');
+
+        const params = new URLSearchParams({
+          acao: 'reordenar',
+          ids: ids
+        });
+
+        const resp = await fetch(
+          `${APPS_SCRIPT_URL}?${params.toString()}`,
+          {
+            method: 'GET',
+            cache: 'no-store'
+          }
+        );
+
+        if (!resp.ok) {
+          throw new Error('Erro HTTP ao salvar a ordem.');
+        }
+
+      } catch (err) {
+        mostrarToast(
+          'Erro ao salvar a ordem. Tente novamente.',
+          'erro'
+        );
+
+        console.error('Erro ao reordenar:', err);
+      }
     }
-    renderizarBotoes();
-  }
 
-  // ─── MODAL NOVO / EDITAR ─────────────────────────────
-  function abrirModalNovo() {
-    modalEditId = null;
-    document.getElementById('modalTitulo').textContent = 'Novo Texto de Feedback';
-    document.getElementById('modalNome').value  = '';
-    document.getElementById('modalTexto').value = '';
-    document.getElementById('modalOverlay').classList.add('ativo');
-  }
+    // ─── MODO DE EDIÇÃO ────────────────────────────────
 
-  function abrirModalEditar(id) {
-    const b = botoes.find(x => x.id === id);
-    if (!b) return;
-    modalEditId = id;
-    document.getElementById('modalTitulo').textContent = 'Editar Texto de Feedback';
-    document.getElementById('modalNome').value  = b.nome;
-    document.getElementById('modalTexto').value = b.texto;
-    document.getElementById('modalOverlay').classList.add('ativo');
-  }
+    function toggleModoEdicao() {
+      modoEdicao = !modoEdicao;
 
-  function fecharModal() {
-    document.getElementById('modalOverlay').classList.remove('ativo');
-  }
+      const btn = document.getElementById('btnModoEdicao');
 
-  async function confirmarModal() {
-    const nome  = document.getElementById('modalNome').value.trim();
-    const texto = document.getElementById('modalTexto').value;
-    if (!nome)         { mostrarToast('Informe o nome do botão.', 'erro'); return; }
-    if (!texto.trim()) { mostrarToast('Informe o texto do feedback.', 'erro'); return; }
-
-    const btnConf = document.getElementById('btnConfirmarModal');
-    btnConf.disabled    = true;
-    btnConf.textContent = 'Salvando...';
-
-    const id = modalEditId || ('custom_' + Date.now());
-
-    try {
-      const params = new URLSearchParams({ acao: 'salvarBotao', id, nome, texto });
-      await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
-
-      if (modalEditId) {
-        const idx = botoes.findIndex(x => x.id === modalEditId);
-        if (idx >= 0) { botoes[idx].nome = nome; botoes[idx].texto = texto; }
+      if (modoEdicao) {
+        btn.textContent = '✅ Concluir Edição';
+        btn.style.background = '#064e3b';
+        btn.style.color = '#6ee7b7';
       } else {
-        botoes.push({ id, nome, texto, ordem: botoes.length + 1 });
+        btn.textContent = '✏️ Editar Botões';
+        btn.style.background = '';
+        btn.style.color = '';
       }
 
       renderizarBotoes();
-      fecharModal();
-      mostrarToast(modalEditId ? 'Botão atualizado!' : 'Novo botão criado!');
-    } catch (err) {
-      mostrarToast('Erro ao salvar botão.', 'erro');
-      console.error(err);
-    } finally {
-      btnConf.disabled    = false;
-      btnConf.textContent = 'Salvar';
     }
-  }
 
-  async function deletarBotao(id) {
-    if (!confirm('Excluir este botão?')) return;
-    try {
-      const params = new URLSearchParams({ acao: 'deletarBotao', id });
-      await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
-      botoes = botoes.filter(b => b.id !== id);
-      renderizarBotoes();
-      mostrarToast('Botão excluído.');
-    } catch (err) {
-      mostrarToast('Erro ao excluir botão.', 'erro');
-      console.error(err);
+    // ─── MODAL NOVO / EDITAR ───────────────────────────
+
+    function abrirModalNovo() {
+      modalEditId = null;
+
+      document.getElementById('modalTitulo').textContent =
+        'Novo Texto de Feedback';
+
+      document.getElementById('modalNome').value = '';
+      document.getElementById('modalTexto').value = '';
+
+      document
+        .getElementById('modalOverlay')
+        .classList.add('ativo');
     }
-  }
 
-  document.getElementById('modalOverlay').addEventListener('click', function(e) {
-    if (e.target === this) fecharModal();
-  });
+    function abrirModalEditar(id) {
+      const botao = botoes.find(function(item) {
+        return item.id === id;
+      });
 
-  // ─── VERIFICAÇÃO DE USERNAME ──────────────────────────
-  function agendarVerificacao() {
-    clearTimeout(debounceTimer);
-    const username = document.getElementById('username').value.trim();
-    if (!username) { limparAvisoUsername(); return; }
-    debounceTimer = setTimeout(() => verificarUsername(username), 800);
-  }
-
-  async function verificarUsername(username) {
-    const inputEl = document.getElementById('username');
-    const avisoEl = document.getElementById('avisoUsername');
-    const loadEl  = document.getElementById('verificandoLabel');
-
-    loadEl.classList.add('visivel');
-    inputEl.classList.remove('input-alerta', 'input-ok');
-    avisoEl.classList.remove('visivel');
-
-    try {
-      const params = new URLSearchParams({ acao: 'verificar', username });
-      const resp   = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
-      const json   = await resp.json();
-
-      loadEl.classList.remove('visivel');
-
-      if (json.alerta) {
-        inputEl.classList.add('input-alerta');
-        avisoEl.innerHTML = `⚠️ <strong>Atenção:</strong> Este streamer já recebeu um feedback em <strong>${json.dataUltimoFeedback}</strong>. Verifique se uma nova análise é necessária.`;
-        avisoEl.classList.add('visivel');
-      } else {
-        inputEl.classList.add('input-ok');
+      if (!botao) {
+        return;
       }
-    } catch (err) {
-      loadEl.classList.remove('visivel');
-      console.warn('Não foi possível verificar o username:', err);
+
+      modalEditId = id;
+
+      document.getElementById('modalTitulo').textContent =
+        'Editar Texto de Feedback';
+
+      document.getElementById('modalNome').value = botao.nome;
+      document.getElementById('modalTexto').value = botao.texto;
+
+      document
+        .getElementById('modalOverlay')
+        .classList.add('ativo');
     }
-  }
 
-  function limparAvisoUsername() {
-    document.getElementById('avisoUsername').classList.remove('visivel');
-    document.getElementById('verificandoLabel').classList.remove('visivel');
-    document.getElementById('username').classList.remove('input-alerta', 'input-ok');
-  }
+    function fecharModal() {
+      document
+        .getElementById('modalOverlay')
+        .classList.remove('ativo');
+    }
 
-  // ─── MODAL ALERTA ────────────────────────────────────
-  function abrirModalAlerta(dataUltimoFeedback, dadosSalvar) {
-    dadosPendentesParaSalvar = dadosSalvar;
-    document.getElementById('modalAlertaTexto').innerHTML =
-      `O streamer <strong>${dadosSalvar.username}</strong> já recebeu um feedback em <strong>${dataUltimoFeedback}</strong>.<br><br>Deseja salvar mesmo assim?`;
-    document.getElementById('modalAlerta').classList.add('ativo');
-  }
+    async function confirmarModal() {
+      const nome = document
+        .getElementById('modalNome')
+        .value
+        .trim();
 
-  function fecharModalAlerta() {
-    dadosPendentesParaSalvar = null;
-    document.getElementById('modalAlerta').classList.remove('ativo');
-  }
+      const texto = document
+        .getElementById('modalTexto')
+        .value;
 
-  function confirmarSalvarMesmoAssim() {
-    fecharModalAlerta();
-    if (dadosPendentesParaSalvar) enviarParaPlanilha(dadosPendentesParaSalvar);
-  }
+      if (!nome) {
+        mostrarToast(
+          'Informe o nome do botão.',
+          'erro'
+        );
+        return;
+      }
 
-  document.getElementById('modalAlerta').addEventListener('click', function(e) {
-    if (e.target === this) fecharModalAlerta();
-  });
+      if (!texto.trim()) {
+        mostrarToast(
+          'Informe o texto do feedback.',
+          'erro'
+        );
+        return;
+      }
 
-  // ─── INTRODUÇÃO ──────────────────────────────────────
-  function gerarIntroducao() {
-    document.getElementById('textoFinal').value =
+      const btnConfirmar = document
+        .getElementById('btnConfirmarModal');
+
+      const idOriginal = modalEditId;
+      const eraEdicao = Boolean(idOriginal);
+      const id = idOriginal || `custom_${Date.now()}`;
+
+      btnConfirmar.disabled = true;
+      btnConfirmar.textContent = 'Salvando...';
+
+      try {
+        const params = new URLSearchParams({
+          acao: 'salvarBotao',
+          id: id,
+          nome: nome,
+          texto: texto
+        });
+
+        const resp = await fetch(
+          `${APPS_SCRIPT_URL}?${params.toString()}`,
+          {
+            method: 'GET',
+            cache: 'no-store'
+          }
+        );
+
+        if (!resp.ok) {
+          throw new Error('Erro HTTP ao salvar o botão.');
+        }
+
+        const json = await resp.json();
+
+        if (json.status !== 'ok') {
+          throw new Error(
+            json.mensagem ||
+            'Não foi possível salvar o botão.'
+          );
+        }
+
+        if (eraEdicao) {
+          const indice = botoes.findIndex(function(item) {
+            return item.id === idOriginal;
+          });
+
+          if (indice >= 0) {
+            botoes[indice].nome = nome;
+            botoes[indice].texto = texto;
+          }
+        } else {
+          botoes.push({
+            id: id,
+            nome: nome,
+            texto: texto,
+            ordem: botoes.length + 1
+          });
+        }
+
+        renderizarBotoes();
+        fecharModal();
+        modalEditId = null;
+
+        mostrarToast(
+          eraEdicao
+            ? 'Botão atualizado!'
+            : 'Novo botão criado!'
+        );
+
+      } catch (err) {
+        mostrarToast(
+          'Erro ao salvar botão.',
+          'erro'
+        );
+
+        console.error('Erro ao salvar botão:', err);
+
+      } finally {
+        btnConfirmar.disabled = false;
+        btnConfirmar.textContent = 'Salvar';
+      }
+    }
+
+    async function deletarBotao(id) {
+      if (!confirm('Excluir este botão?')) {
+        return;
+      }
+
+      try {
+        const params = new URLSearchParams({
+          acao: 'deletarBotao',
+          id: id
+        });
+
+        const resp = await fetch(
+          `${APPS_SCRIPT_URL}?${params.toString()}`,
+          {
+            method: 'GET',
+            cache: 'no-store'
+          }
+        );
+
+        if (!resp.ok) {
+          throw new Error('Erro HTTP ao excluir o botão.');
+        }
+
+        const json = await resp.json();
+
+        if (json.status !== 'ok') {
+          throw new Error(
+            json.mensagem ||
+            'Não foi possível excluir o botão.'
+          );
+        }
+
+        botoes = botoes.filter(function(botao) {
+          return botao.id !== id;
+        });
+
+        renderizarBotoes();
+        mostrarToast('Botão excluído.');
+
+      } catch (err) {
+        mostrarToast(
+          'Erro ao excluir botão.',
+          'erro'
+        );
+
+        console.error('Erro ao excluir botão:', err);
+      }
+    }
+
+    document
+      .getElementById('modalOverlay')
+      .addEventListener('click', function(evento) {
+        if (evento.target === this) {
+          fecharModal();
+        }
+      });
+
+    // ─── VERIFICAÇÃO DE USERNAME ───────────────────────
+
+    function agendarVerificacao() {
+      clearTimeout(debounceTimer);
+
+      const username = document
+        .getElementById('username')
+        .value
+        .trim();
+
+      if (!username) {
+        limparAvisoUsername();
+        return;
+      }
+
+      debounceTimer = setTimeout(function() {
+        verificarUsername(username);
+      }, 800);
+    }
+
+    async function verificarUsername(username) {
+      const input = document.getElementById('username');
+      const aviso = document.getElementById('avisoUsername');
+      const carregando = document.getElementById('verificandoLabel');
+
+      carregando.classList.add('visivel');
+      input.classList.remove('input-alerta', 'input-ok');
+      aviso.classList.remove('visivel');
+
+      try {
+        const params = new URLSearchParams({
+          acao: 'verificar',
+          username: username
+        });
+
+        const resp = await fetch(
+          `${APPS_SCRIPT_URL}?${params.toString()}`,
+          {
+            method: 'GET',
+            cache: 'no-store'
+          }
+        );
+
+        if (!resp.ok) {
+          throw new Error('Erro HTTP na verificação.');
+        }
+
+        const json = await resp.json();
+
+        if (json.status === 'erro') {
+          throw new Error(
+            json.mensagem ||
+            'Erro retornado pelo Apps Script.'
+          );
+        }
+
+        if (json.alerta) {
+          input.classList.add('input-alerta');
+
+          aviso.innerHTML =
+            `⚠️ <strong>Atenção:</strong> ` +
+            `Este streamer já recebeu um feedback em ` +
+            `<strong>${escaparHtml(json.dataUltimoFeedback)}</strong>. ` +
+            `Verifique se uma nova análise é necessária.`;
+
+          aviso.classList.add('visivel');
+        } else {
+          input.classList.add('input-ok');
+        }
+
+      } catch (err) {
+        console.warn(
+          'Não foi possível verificar o username:',
+          err
+        );
+
+      } finally {
+        carregando.classList.remove('visivel');
+      }
+    }
+
+    function limparAvisoUsername() {
+      document
+        .getElementById('avisoUsername')
+        .classList.remove('visivel');
+
+      document
+        .getElementById('verificandoLabel')
+        .classList.remove('visivel');
+
+      document
+        .getElementById('username')
+        .classList.remove(
+          'input-alerta',
+          'input-ok'
+        );
+    }
+
+    // ─── MODAL DE ALERTA ───────────────────────────────
+
+    function abrirModalAlerta(dataUltimoFeedback, dadosSalvar) {
+      dadosPendentesParaSalvar = dadosSalvar;
+
+      document
+        .getElementById('modalAlertaTexto')
+        .innerHTML =
+          `O streamer <strong>${escaparHtml(dadosSalvar.username)}</strong> ` +
+          `já recebeu um feedback em ` +
+          `<strong>${escaparHtml(dataUltimoFeedback)}</strong>.` +
+          `<br><br>Deseja salvar mesmo assim?`;
+
+      document
+        .getElementById('modalAlerta')
+        .classList.add('ativo');
+    }
+
+    function fecharModalAlerta() {
+      dadosPendentesParaSalvar = null;
+
+      document
+        .getElementById('modalAlerta')
+        .classList.remove('ativo');
+    }
+
+    function confirmarSalvarMesmoAssim() {
+      const dados = dadosPendentesParaSalvar;
+
+      dadosPendentesParaSalvar = null;
+
+      document
+        .getElementById('modalAlerta')
+        .classList.remove('ativo');
+
+      if (dados) {
+        enviarParaPlanilha(dados);
+      }
+    }
+
+    document
+      .getElementById('modalAlerta')
+      .addEventListener('click', function(evento) {
+        if (evento.target === this) {
+          fecharModalAlerta();
+        }
+      });
+
+    // ─── INTRODUÇÃO ────────────────────────────────────
+
+    function gerarIntroducao() {
+      document.getElementById('textoFinal').value =
 `Olá! Tudo bem?
 
 Vou te passar alguns pontos para te ajudar a melhorar seu desempenho em suas lives.
 
 *Pontos a desenvolver*
 `;
-  }
-
-  // ─── LIMPAR ──────────────────────────────────────────
-  function limparTudo() {
-    document.getElementById('username').value = '';
-    limparAvisoUsername();
-    preencherDataHora();
-    gerarIntroducao();
-  }
-
-  // ─── SALVAR FEEDBACK ─────────────────────────────────
- async function salvarFeedback() {
-    const username  = document.getElementById('username').value.trim();
-    const dataLive  = document.getElementById('dataLive').value;
-    const horaLive  = document.getElementById('horaLive').value;
-
-    // Remove quebras de linha duplicadas antes de qualquer validação
-    let textoBase = document.getElementById('textoFinal').value;
-    textoBase = textoBase.replace(/\n{3,}/g, '\n\n').trim();
-    document.getElementById('textoFinal').value = textoBase;
-
-    if (!username)  { mostrarToast('Preencha o Username do streamer.', 'erro'); return; }
-    if (!dataLive)  { mostrarToast('Preencha a Data da Live.', 'erro'); return; }
-    if (!textoBase) { mostrarToast('O feedback está vazio.', 'erro'); return; }
-
-    const [ano, mes, dia] = dataLive.split('-');
-    const dataFormatada   = `${dia}/${mes}/${ano}`;
-    const horaTexto       = horaLive ? ` às ${horaLive}` : '';
-
-    const textoFinal =
-      textoBase
-      + `\n\nAs dicas acima foram baseadas na live que você fez no dia ${dataFormatada}${horaTexto}.`
-      + `\n\nEspero que as dicas te ajudem e qualquer dúvida, por favor, me avise :)`
-      + `\n\nAguardo sua próxima live :)`;
-
-    const dadosSalvar = { username, dataLive: dataFormatada, horaLive, feedback: textoFinal };
-
-    // Se campo com alerta, abre confirmação
-    if (document.getElementById('username').classList.contains('input-alerta')) {
-      const dataTexto = document.getElementById('avisoUsername')
-        .querySelector('strong:last-child')?.textContent || 'data desconhecida';
-      abrirModalAlerta(dataTexto, dadosSalvar);
-      return;
     }
 
-    // Verifica uma última vez antes de salvar
-    try {
-      const params = new URLSearchParams({ acao: 'verificar', username });
-      const resp   = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
-      const json   = await resp.json();
-      if (json.alerta) {
-        abrirModalAlerta(json.dataUltimoFeedback, dadosSalvar);
+    // ─── LIMPAR FORMULÁRIO ────────────────────────────
+
+    function limparTudo() {
+      document.getElementById('username').value = '';
+
+      limparAvisoUsername();
+      preencherDataHora();
+      gerarIntroducao();
+
+      /*
+       * O card do último registro permanece visível,
+       * pois ele serve como confirmação do salvamento.
+       */
+    }
+
+    // ─── SALVAR FEEDBACK ──────────────────────────────
+
+    async function salvarFeedback() {
+      const username = document
+        .getElementById('username')
+        .value
+        .trim();
+
+      const dataLive = document
+        .getElementById('dataLive')
+        .value;
+
+      const horaLive = document
+        .getElementById('horaLive')
+        .value;
+
+      let textoBase = document
+        .getElementById('textoFinal')
+        .value;
+
+      textoBase = textoBase
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+
+      document
+        .getElementById('textoFinal')
+        .value = textoBase;
+
+      if (!username) {
+        mostrarToast(
+          'Preencha o Username do streamer.',
+          'erro'
+        );
         return;
       }
-    } catch (err) {
-      console.warn('Verificação final falhou, salvando mesmo assim:', err);
+
+      if (!dataLive) {
+        mostrarToast(
+          'Preencha a Data da Live.',
+          'erro'
+        );
+        return;
+      }
+
+      if (!textoBase) {
+        mostrarToast(
+          'O feedback está vazio.',
+          'erro'
+        );
+        return;
+      }
+
+      const partesData = dataLive.split('-');
+      const ano = partesData[0];
+      const mes = partesData[1];
+      const dia = partesData[2];
+
+      const dataFormatada =
+        `${dia}/${mes}/${ano}`;
+
+      const horaTexto = horaLive
+        ? ` às ${horaLive}`
+        : '';
+
+      const textoFinal =
+        textoBase +
+        `\n\nAs dicas acima foram baseadas na live que você fez no dia ${dataFormatada}${horaTexto}.` +
+        `\n\nEspero que as dicas te ajudem e qualquer dúvida, por favor, me avise :)` +
+        `\n\nAguardo sua próxima live :)`;
+
+      const dadosSalvar = {
+        username: username,
+        dataLive: dataFormatada,
+        horaLive: horaLive,
+        feedback: textoFinal
+      };
+
+      const inputUsername =
+        document.getElementById('username');
+
+      if (
+        inputUsername.classList.contains('input-alerta')
+      ) {
+        const elementosStrong =
+          document
+            .getElementById('avisoUsername')
+            .querySelectorAll('strong');
+
+        const dataTexto =
+          elementosStrong.length > 0
+            ? elementosStrong[elementosStrong.length - 1].textContent
+            : 'data desconhecida';
+
+        abrirModalAlerta(
+          dataTexto,
+          dadosSalvar
+        );
+
+        return;
+      }
+
+      /*
+       * Faz uma última verificação antes do salvamento.
+       */
+      try {
+        const params = new URLSearchParams({
+          acao: 'verificar',
+          username: username
+        });
+
+        const resp = await fetch(
+          `${APPS_SCRIPT_URL}?${params.toString()}`,
+          {
+            method: 'GET',
+            cache: 'no-store'
+          }
+        );
+
+        if (!resp.ok) {
+          throw new Error(
+            'Erro HTTP na verificação final.'
+          );
+        }
+
+        const json = await resp.json();
+
+        if (
+          json.status === 'ok' &&
+          json.alerta
+        ) {
+          abrirModalAlerta(
+            json.dataUltimoFeedback,
+            dadosSalvar
+          );
+
+          return;
+        }
+
+      } catch (err) {
+        /*
+         * Se a verificação falhar, o salvamento continua.
+         */
+        console.warn(
+          'Verificação final falhou. O salvamento continuará:',
+          err
+        );
+      }
+
+      await enviarParaPlanilha(dadosSalvar);
     }
 
-    enviarParaPlanilha(dadosSalvar);
-  }
+    // ─── ENVIAR PARA A PLANILHA ────────────────────────
 
-  // ─── ENVIAR PARA PLANILHA ────────────────────────────
-  async function enviarParaPlanilha(dados) {
-    const btnSalvar = document.getElementById('btnSalvar');
-    btnSalvar.disabled = true;
-    btnSalvar.innerHTML = '<span class="spinner"></span> Salvando...';
-    mostrarToast('Enviando para a planilha...', 'enviando');
+    async function enviarParaPlanilha(dados) {
+      const btnSalvar =
+        document.getElementById('btnSalvar');
 
-    try {
-      const params = new URLSearchParams({
-        acao:     'salvar',
-        username:  dados.username,
-        dataLive:  dados.dataLive,
-        horaLive:  dados.horaLive,
-        feedback:  dados.feedback
-      });
+      btnSalvar.disabled = true;
+      btnSalvar.innerHTML =
+        '<span class="spinner"></span> Salvando...';
 
-      await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`, {
-        method: 'GET',
-        mode:   'no-cors'
-      });
+      mostrarToast(
+        'Enviando para a planilha...',
+        'enviando'
+      );
 
-      mostrarToast('✅ Feedback salvo na planilha!');
-      setTimeout(() => limparTudo(), 1500);
-    } catch (err) {
-      mostrarToast('Erro ao salvar. Verifique a URL do script.', 'erro');
-      console.error(err);
-    } finally {
-      btnSalvar.disabled  = false;
-      btnSalvar.innerHTML = '💾 Salvar Feedback';
+      try {
+        const params = new URLSearchParams({
+          acao: 'salvar',
+          username: dados.username,
+          dataLive: dados.dataLive,
+          horaLive: dados.horaLive,
+          feedback: dados.feedback
+        });
+
+        /*
+         * Não usar mode: "no-cors" aqui.
+         * O no-cors impede a leitura da resposta JSON.
+         */
+        const resp = await fetch(
+          `${APPS_SCRIPT_URL}?${params.toString()}`,
+          {
+            method: 'GET',
+            cache: 'no-store'
+          }
+        );
+
+        if (!resp.ok) {
+          throw new Error(
+            'Erro HTTP ao salvar o feedback.'
+          );
+        }
+
+        const json = await resp.json();
+
+        if (json.status !== 'ok') {
+          throw new Error(
+            json.mensagem ||
+            'O Apps Script informou que o salvamento falhou.'
+          );
+        }
+
+        if (
+          typeof json.timestamp === 'undefined' ||
+          typeof json.username === 'undefined'
+        ) {
+          throw new Error(
+            'O Apps Script não retornou o Timestamp e o Username. ' +
+            'Verifique se a versão atualizada foi publicada.'
+          );
+        }
+
+        /*
+         * Mostra os dados retornados pelo Apps Script.
+         * Esses dados correspondem às colunas A e B.
+         */
+        document
+          .getElementById('lastTimestamp')
+          .textContent = json.timestamp;
+
+        document
+          .getElementById('lastUsername')
+          .textContent = json.username;
+
+        document
+          .getElementById('ultimoRegistro')
+          .style.display = 'block';
+
+        mostrarToast(
+          '✅ Feedback salvo na planilha!'
+        );
+
+        setTimeout(function() {
+          limparTudo();
+        }, 1500);
+
+      } catch (err) {
+        mostrarToast(
+          'Erro ao salvar: ' + err.message,
+          'erro'
+        );
+
+        console.error(
+          'Erro no salvamento:',
+          err
+        );
+
+      } finally {
+        btnSalvar.disabled = false;
+        btnSalvar.innerHTML =
+          '💾 Salvar Feedback';
+      }
     }
-  }
 
-  // ─── TOAST ───────────────────────────────────────────
-  function mostrarToast(msg, tipo = '') {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className   = `toast visivel ${tipo}`;
-    setTimeout(() => { t.className = 'toast'; }, 3500);
-  }
+    // ─── INICIALIZAÇÃO ─────────────────────────────────
 
-  // ─── START ───────────────────────────────────────────
-  init();
-</script>
+    init();
+  </script>
+
 </body>
 </html>
