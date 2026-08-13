@@ -917,8 +917,6 @@
       // Carrega o contador imediatamente
       carregarContadorFeedbacks();
 
-      // Atualiza automaticamente a cada 1 minuto
-      setInterval(carregarContadorFeedbacks, 60000);
     }
 
     // ─── CONTADOR DE FEEDBACKS ────────────────────────
@@ -933,28 +931,12 @@
       return `${partes[2]}/${partes[1]}`;
     }
 
-    function obterUltimasTresDatas() {
-      const hoje = new Date();
-      hoje.setHours(0, 0, 0, 0);
-
-      const datas = [];
-
-      for (let i = 2; i >= 0; i--) {
-        const data = new Date(hoje);
-        data.setDate(hoje.getDate() - i);
-
-        const ano = data.getFullYear();
-        const mes = String(data.getMonth() + 1).padStart(2, '0');
-        const dia = String(data.getDate()).padStart(2, '0');
-
-        datas.push(`${ano}-${mes}-${dia}`);
-      }
-
-      return datas;
-    }
-
-    function exibirContadorFeedbacks(contagens) {
-      const datas = obterUltimasTresDatas();
+    function exibirContadorFeedbacks(contagens, datasServidor) {
+      // Usa exatamente as três chaves calculadas pelo Apps Script,
+      // que aplica o mesmo fuso horário usado no timestamp da planilha.
+      const datas = Array.isArray(datasServidor) && datasServidor.length === 3
+        ? datasServidor
+        : Object.keys(contagens).sort();
       const elementos = [
         ['contadorDiaAnterior2', 'contadorValorAnterior2'],
         ['contadorDiaAnterior1', 'contadorValorAnterior1'],
@@ -993,7 +975,7 @@
           );
         }
 
-        exibirContadorFeedbacks(json.contagens || {});
+        exibirContadorFeedbacks(json.contagens || {}, json.datas || []);
         status.textContent =
           `Atualizado às ${new Date().toLocaleTimeString('pt-BR')}`;
       } catch (erro) {
@@ -1854,17 +1836,13 @@ Vou te passar alguns pontos para te ajudar a melhorar seu desempenho em suas liv
         });
 
         /*
-         * O feedback é enviado por POST.
-         * GET nunca grava dados na planilha.
+         * Não usar mode: "no-cors" aqui.
+         * O no-cors impede a leitura da resposta JSON.
          */
         const resp = await fetch(
-          APPS_SCRIPT_URL,
+          `${APPS_SCRIPT_URL}?${params.toString()}`,
           {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-            },
-            body: params.toString(),
+            method: 'GET',
             cache: 'no-store'
           }
         );
