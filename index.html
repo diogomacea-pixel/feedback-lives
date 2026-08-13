@@ -1,4 +1,6 @@
 
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -1083,9 +1085,15 @@
           botoes = json.botoes;
           setStatusBotoes('');
         } else {
-          setStatusBotoes('⏳ Configurando textos padrão...');
-          await subirDefaultsParaServidor();
-          setStatusBotoes('');
+          // Os textos padrão são usados apenas localmente.
+          // A abertura da página nunca grava dados na planilha.
+          botoes = textosDefault.map(function(botao, indice) {
+            return {
+              ...botao,
+              ordem: indice + 1
+            };
+          });
+          setStatusBotoes('Usando textos padrão locais.');
         }
 
       } catch (err) {
@@ -1101,48 +1109,6 @@
       }
 
       renderizarBotoes();
-    }
-
-    async function subirDefaultsParaServidor() {
-      for (let i = 0; i < textosDefault.length; i++) {
-        const botao = textosDefault[i];
-
-        try {
-          const params = new URLSearchParams({
-            acao: 'salvarBotao',
-            id: botao.id,
-            nome: botao.nome,
-            texto: botao.texto,
-            ordem: String(i + 1)
-          });
-
-          const resp = await fetch(
-            `${APPS_SCRIPT_URL}?${params.toString()}`,
-            {
-              method: 'GET',
-              cache: 'no-store'
-            }
-          );
-
-          if (!resp.ok) {
-            throw new Error(`Erro ao salvar o botão ${botao.id}.`);
-          }
-
-        } catch (err) {
-          console.warn(
-            'Erro ao subir botão padrão:',
-            botao.id,
-            err
-          );
-        }
-      }
-
-      botoes = textosDefault.map(function(botao, indice) {
-        return {
-          ...botao,
-          ordem: indice + 1
-        };
-      });
     }
 
     // ─── RENDERIZAR BOTÕES ─────────────────────────────
