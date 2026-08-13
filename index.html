@@ -1,3 +1,6 @@
+
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -906,7 +909,6 @@
     let debounceTimer = null;
     let dadosPendentesParaSalvar = null;
     let toastTimer = null;
-    let salvamentoEmAndamento = false;
 
     // ─── INIT ──────────────────────────────────────────
 
@@ -918,6 +920,8 @@
       // Carrega o contador imediatamente
       carregarContadorFeedbacks();
 
+      // Atualiza automaticamente a cada 1 minuto
+      setInterval(carregarContadorFeedbacks, 60000);
     }
 
     // ─── CONTADOR DE FEEDBACKS ────────────────────────
@@ -932,31 +936,39 @@
       return `${partes[2]}/${partes[1]}`;
     }
 
-    function obterUltimasTresDatas(contagens) {
-      return Object.keys(contagens || {})
-        .filter(function(chave) {
-          return /^\d{4}-\d{2}-\d{2}$/.test(chave);
-        })
-        .sort()
-        .slice(-3);
+    function obterUltimasTresDatas() {
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0);
+
+      const datas = [];
+
+      for (let i = 2; i >= 0; i--) {
+        const data = new Date(hoje);
+        data.setDate(hoje.getDate() - i);
+
+        const ano = data.getFullYear();
+        const mes = String(data.getMonth() + 1).padStart(2, '0');
+        const dia = String(data.getDate()).padStart(2, '0');
+
+        datas.push(`${ano}-${mes}-${dia}`);
+      }
+
+      return datas;
     }
 
     function exibirContadorFeedbacks(contagens) {
-      const datas = obterUltimasTresDatas(contagens);
+      const datas = obterUltimasTresDatas();
       const elementos = [
         ['contadorDiaAnterior2', 'contadorValorAnterior2'],
         ['contadorDiaAnterior1', 'contadorValorAnterior1'],
         ['contadorDiaAtual', 'contadorValorAtual']
       ];
 
-      elementos.forEach(function(ids, indice) {
-        const data = datas[indice] || '';
-        document.getElementById(ids[0]).textContent = data
-          ? formatarDataContador(data)
-          : '--/--';
-        document.getElementById(ids[1]).textContent = data
-          ? Number(contagens[data] || 0)
-          : 0;
+      datas.forEach(function(data, indice) {
+        document.getElementById(elementos[indice][0]).textContent =
+          formatarDataContador(data);
+        document.getElementById(elementos[indice][1]).textContent =
+          Number(contagens[data] || 0);
       });
     }
 
@@ -1672,10 +1684,6 @@ Vou te passar alguns pontos para te ajudar a melhorar seu desempenho em suas liv
     // ─── SALVAR FEEDBACK ──────────────────────────────
 
     async function salvarFeedback() {
-      if (salvamentoEmAndamento) {
-        return;
-      }
-
       const username = document
         .getElementById('username')
         .value
@@ -1827,12 +1835,6 @@ Vou te passar alguns pontos para te ajudar a melhorar seu desempenho em suas liv
     // ─── ENVIAR PARA A PLANILHA ────────────────────────
 
     async function enviarParaPlanilha(dados) {
-      if (salvamentoEmAndamento) {
-        return;
-      }
-
-      salvamentoEmAndamento = true;
-
       const btnSalvar =
         document.getElementById('btnSalvar');
 
@@ -1855,8 +1857,8 @@ Vou te passar alguns pontos para te ajudar a melhorar seu desempenho em suas liv
         });
 
         /*
-         * Não usar mode: "no-cors" aqui.
-         * O no-cors impede a leitura da resposta JSON.
+         * O feedback é enviado por POST.
+         * GET nunca grava dados na planilha.
          */
         const resp = await fetch(
           APPS_SCRIPT_URL,
@@ -1934,7 +1936,6 @@ Vou te passar alguns pontos para te ajudar a melhorar seu desempenho em suas liv
         );
 
       } finally {
-        salvamentoEmAndamento = false;
         btnSalvar.disabled = false;
         btnSalvar.innerHTML =
           '💾 Salvar Feedback';
